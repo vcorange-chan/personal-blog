@@ -14,7 +14,7 @@ export const siteConfig: SiteConfig = {
 	// Used as both a meta property (src/components/BaseHead.astro L:31 + L:49) & the generated satori png (src/pages/og-image/[slug].png.ts)
 	author: "Clifford Chen",
 	// Used as the default description meta property and webmanifest description
-	description: "Personal blog and notes by Clifford Chen.",
+	description: "A place for mathematics, software, and long-form thinking.",
 	// HTML lang property, found in src/layouts/Base.astro L:18 & astro.config.ts L:48
 	lang: "en",
 	// Meta property, found in src/components/BaseHead.astro L:42

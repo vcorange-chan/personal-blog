@@ -1,10 +1,9 @@
 ---
-import { render } from "astro:content";
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import { Icon } from "astro-icon/components";
 import PostPreview from "@/components/blog/PostPreview.astro";
 import Pagination from "@/components/Paginator.astro";
-import { getAllPosts, getTagMeta, getUniqueTags } from "@/data/post";
+import { getAllPosts, getUniqueTags } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
 import { collectionDateSort } from "@/utils/date";
 
@@ -14,7 +13,7 @@ export const getStaticPaths = (async ({ paginate }) => {
 	const uniqueTags = getUniqueTags(sortedPosts);
 
 	return uniqueTags.flatMap((tag) => {
-		const postsWithTag = sortedPosts.filter((post) => post.data.tags.includes(tag));
+		const postsWithTag = sortedPosts.filter((post) => post.data.tags?.includes(tag));
 		return paginate(postsWithTag, {
 			pageSize: 10,
 			params: { tag },
@@ -26,13 +25,9 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { page } = Astro.props as Props;
 const { tag } = Astro.params;
-const tagMeta = await getTagMeta(tag);
-
-const TagContent = tagMeta ? (await render(tagMeta)).Content : null;
-
 const meta = {
-	description: tagMeta?.data.description ?? `View all posts with the tag - ${tag}`,
-	title: tagMeta?.data.title ?? `Posts about ${tag}`,
+	description: `View all posts with the tag - ${tag}`,
+	title: `Posts about ${tag}`,
 };
 
 const paginationProps = {
@@ -61,10 +56,9 @@ const paginationProps = {
 			<li aria-current="page" class=""><span aria-hidden="true">#</span>{tag}</li>
 		</ul>
 	</nav>
-	<h1 class="title capitalize">{tagMeta?.data.title ?? `Posts about ${tag}`}</h1>
+	<h1 class="title capitalize">{`Posts about ${tag}`}</h1>
 	<div class="prose prose-sm prose-cactus mb-16 max-w-none">
-		{tagMeta?.data.description && <p>{tagMeta.data.description}</p>}
-		{TagContent && <TagContent />}
+		<p>All posts tagged with <span aria-hidden="true">#</span>{tag}.</p>
 	</div>
 	<ul class="space-y-4">
 		{

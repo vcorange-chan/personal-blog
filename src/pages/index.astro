@@ -8,16 +8,8 @@ import { collectionDateSort } from "@/utils/date";
 // Posts
 const MAX_POSTS = 10;
 const allPosts = await getAllPosts();
-const allPostsByDate = allPosts.sort(collectionDateSort) as CollectionEntry<"post">[];
+const allPostsByDate = allPosts.sort(collectionDateSort) as CollectionEntry<"posts">[];
 const latestPosts = allPostsByDate.slice(0, MAX_POSTS);
-
-// Pinned Posts, set to a max of 3;
-const MAX_PINNED_POSTS = 3;
-const pinnedPosts = allPostsByDate
-	.values()
-	.filter((p) => p.data.pinned)
-	.take(MAX_PINNED_POSTS)
-	.toArray();
 
 ---
 
@@ -25,23 +17,9 @@ const pinnedPosts = allPostsByDate
 	<section>
 		<h1 class="title mb-12">Clifford Chen</h1>
 		<p class="mb-4">
-			Personal blog and notes. A quieter place for long-form writing, study notes, and projects.
+			A place for mathematics, software, and long-form thinking.
 		</p>
 	</section>
-	{
-		pinnedPosts.length > 0 && (
-			<section class="mt-16">
-				<h2 class="title mb-6 text-xl">Pinned Posts</h2>
-				<ul class="space-y-4" role="list">
-					{pinnedPosts.map((p) => (
-						<li class="grid gap-1 sm:grid-cols-[auto_1fr]">
-							<PostPreview post={p} />
-						</li>
-					))}
-				</ul>
-			</section>
-		)
-	}
 	<section class="mt-16">
 		<h2 class="title text-accent mb-6 text-xl"><a href="/posts/">Posts</a></h2>
 		<ul class="space-y-4" role="list">
