@@ -516,7 +516,7 @@
       <div class="word-pill"><span class="w-fr">donnent</span><span class="w-en">give (they give)</span><button class="w-audio" onclick="speak('donnent')">🔊</button></div>
       <div class="word-pill"><span class="w-fr">quel</span><span class="w-en">which / what (type?)</span><button class="w-audio" onclick="speak('quel')">🔊</button></div>
       <div class="word-pill"><span class="w-fr">type</span><span class="w-en">type / kind</span><button class="w-audio" onclick="speak('type')">🔊</button></div>
-      <div class="word-pill"><span class="w-fr">d'information</span><span class="w-en">of information</span><button class="w-audio" onclick="speak("d'information")">🔊</button></div>
+      <div class="word-pill"><span class="w-fr">d'information</span><span class="w-en">of information</span><button class="w-audio" onclick="speak('d\'information')">🔊</button></div>
     </div>
   </div>
 
@@ -1054,7 +1054,7 @@
     <div class="breakdown">
       <div class="word-pill"><span class="w-fr">le rythme</span><span class="w-en">the rhythm</span><button class="w-audio" onclick="speak('le rythme')">🔊</button></div>
       <div class="word-pill"><span class="w-fr">et</span><span class="w-en">and</span><button class="w-audio" onclick="speak('et')">🔊</button></div>
-      <div class="word-pill"><span class="w-fr">l'accentuation</span><span class="w-en">the stress / accentuation</span><button class="w-audio" onclick="speak("l'accentuation")">🔊</button></div>
+      <div class="word-pill"><span class="w-fr">l'accentuation</span><span class="w-en">the stress / accentuation</span><button class="w-audio" onclick="speak('l\'accentuation')">🔊</button></div>
     </div>
   </div>
 
@@ -1090,7 +1090,7 @@
       <div class="word-pill"><span class="w-fr">répétez-le</span><span class="w-en">repeat it</span><button class="w-audio" onclick="speak('répétez-le')">🔊</button></div>
       <div class="word-pill"><span class="w-fr">à la française</span><span class="w-en">in the French way</span><button class="w-audio" onclick="speak('à la française')">🔊</button></div>
       <div class="word-pill"><span class="w-fr">notez</span><span class="w-en">note / write down (imperative)</span><button class="w-audio" onclick="speak('notez')">🔊</button></div>
-      <div class="word-pill"><span class="w-fr">comme dans l'exemple</span><span class="w-en">as in the example</span><button class="w-audio" onclick="speak("comme dans l'exemple")">🔊</button></div>
+      <div class="word-pill"><span class="w-fr">comme dans l'exemple</span><span class="w-en">as in the example</span><button class="w-audio" onclick="speak('comme dans l\'exemple')">🔊</button></div>
     </div>
   </div>
 
@@ -1198,21 +1198,52 @@
 
 
 <div class="footer">
-  Leçon 1 — Dossier 1 &nbsp;·&nbsp; Audio powered by Web Speech API (French / fr-FR) &nbsp;·&nbsp; Created June 2026
+  Leçon 1 — Dossier 1 &nbsp;·&nbsp; Audio powered by ElevenLabs via Clifford TTS Proxy &nbsp;·&nbsp; Created June 2026
 </div>
 
 <script>
+  const TTS_ENDPOINT = 'https://tts.cliffordchen.org/speak';
   let currentAudio = null;
+  const audioCache = {};
 
   function setVoiceStatus(message) {
     const banner = document.getElementById('voice-status');
     if (banner) banner.innerHTML = message;
   }
 
-  function speak(text) {
+  async function speak(text) {
     if (currentAudio) {
       currentAudio.pause();
       currentAudio = null;
+    }
+
+    if (audioCache[text]) {
+      currentAudio = new Audio(audioCache[text]);
+      await currentAudio.play();
+      setVoiceStatus('🇫🇷 Playing cached ElevenLabs audio');
+      return;
+    }
+
+    try {
+      setVoiceStatus('🔄 Requesting ElevenLabs audio…');
+      const response = await fetch(TTS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, voice: 'french' })
+      });
+
+      if (!response.ok) throw new Error('TTS proxy returned ' + response.status);
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      audioCache[text] = audioUrl;
+      currentAudio = new Audio(audioUrl);
+      await currentAudio.play();
+      setVoiceStatus('🇫🇷 Playing ElevenLabs audio');
+      return;
+    } catch (error) {
+      console.warn('TTS proxy failed, falling back to browser speech:', error);
+      setVoiceStatus('⚠️ TTS proxy unavailable. Falling back to browser voice.');
     }
 
     if (!window.speechSynthesis) {
@@ -1232,7 +1263,7 @@
   }
 
   function initVoice() {
-    setVoiceStatus('🔊 French audio uses your browser voice · Web Speech API');
+    setVoiceStatus('🇫🇷 ElevenLabs audio ready via TTS proxy');
     if (window.speechSynthesis) window.speechSynthesis.getVoices();
   }
 
