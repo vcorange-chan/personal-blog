@@ -12,6 +12,12 @@ const {
 	readingTime,
 } = Astro.props;
 const tags = data.tags ?? [];
+const languageLabels: Record<string, string> = {
+	en: "English",
+	fr: "Français",
+	ko: "한국어",
+	zh: "中文",
+};
 
 const dateTimeOptions: Intl.DateTimeFormatOptions = {
 	month: "long",
@@ -27,10 +33,13 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 		<FormattedDate date={data.date} dateTimeOptions={dateTimeOptions} /> /{" "}
 		{readingTime}
 	</p>
+	<span class="border-muted/30 rounded-md border px-2 py-1">
+		<span data-i18n="post.language">Language</span>: {languageLabels[data.lang] ?? data.lang}
+	</span>
 	{
 		data.updatedDate && (
 			<span class="bg-quote/5 text-quote rounded-lg px-2 py-1">
-				Updated:
+				<span data-i18n="post.updated">Updated:</span>
 				<FormattedDate class="ms-1" date={data.updatedDate} dateTimeOptions={dateTimeOptions} />
 			</span>
 		)
@@ -60,7 +69,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 				<>
 					{/* prettier-ignore */}
 					<span class="contents">
-						<a class="cactus-link inline-block before:content-['#']" href={`/tags/${tag}/`}><span class="sr-only">View more blogs with the tag&nbsp;</span>{tag}
+						<a class="cactus-link inline-block before:content-['#']" href={`/tags/${tag}/`}><span class="sr-only" data-i18n="aria.viewMoreTag">View more blogs with the tag</span>&nbsp;{tag}
 						</a>{i < tags.length - 1 && ", "}
 					</span>
 				</>

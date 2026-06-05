@@ -30,40 +30,50 @@ export const siteConfig: SiteConfig = {
 	},
 };
 
+type SiteLink = { i18nKey?: string; path: string; title: string };
+
 // Used to generate links in both the Header & Footer.
-export const menuLinks: { path: string; title: string }[] = [
+export const menuLinks: SiteLink[] = [
 	{
+		i18nKey: "nav.home",
 		path: "/",
 		title: "Home",
 	},
 	{
+		i18nKey: "nav.about",
 		path: "/about/",
 		title: "About",
 	},
 	{
+		i18nKey: "nav.posts",
 		path: "/posts/",
 		title: "Posts",
 	},
 	{
+		i18nKey: "nav.series",
 		path: "/series/",
 		title: "Series",
 	},
 ];
 
-export const exploreLinks: { path: string; title: string }[] = [
+export const exploreLinks: SiteLink[] = [
 	{
+		i18nKey: "nav.math",
 		path: "/math/",
 		title: "Math",
 	},
 	{
+		i18nKey: "nav.tech",
 		path: "/tech/",
 		title: "Tech",
 	},
 	{
+		i18nKey: "nav.lang",
 		path: "/lang/",
 		title: "Lang",
 	},
 	{
+		i18nKey: "nav.academia",
 		path: "/academia/",
 		title: "Academia",
 	},
@@ -74,7 +84,7 @@ export const expressiveCodeOptions: AstroExpressiveCodeOptions = {
 	styleOverrides: {
 		borderRadius: "4px",
 		codeFontFamily:
-			'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+			'"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
 		codeFontSize: "0.875rem",
 		codeLineHeight: "1.7142857rem",
 		codePaddingInline: "1rem",

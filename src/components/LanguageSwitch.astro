@@ -14,11 +14,31 @@ const languages = getLanguageCounts(allPosts);
 
 {
 	!!languages.length && (
-		<nav aria-label="Content language" class="ms-auto flex items-center gap-1 sm:ms-4">
+		<nav
+			aria-label="Content language"
+			class="ms-auto flex items-center gap-1 sm:ms-4"
+			data-i18n-aria-label="aria.contentLanguage"
+		>
+			<span class="sr-only" data-i18n="ui.language">UI language</span>
+			{Object.entries(languageLabels).map(([lang, label]) => (
+				<button
+					aria-label={`Set UI language to ${label}`}
+					class="hover:text-accent data-[current=true]:text-accent data-[current=true]:underline inline-flex h-8 min-w-8 cursor-pointer items-center justify-center px-1 text-xs font-semibold underline-offset-2"
+					data-i18n-aria-label="aria.setUiLanguage"
+					data-language-code={lang}
+					data-ui-language-button
+					type="button"
+				>
+					{label}
+				</button>
+			))}
+			<span aria-hidden="true" class="text-muted px-1">/</span>
 			{languages.map(([lang]) => (
 				<a
 					aria-label={`View ${languageLabels[lang] ?? lang} posts`}
 					class="hover:text-accent inline-flex h-8 min-w-8 items-center justify-center px-1 text-xs font-semibold"
+					data-i18n-aria-label="aria.viewLanguage"
+					data-language-code={lang}
 					href={`/languages/${lang}/`}
 				>
 					{languageLabels[lang] ?? lang.toUpperCase()}

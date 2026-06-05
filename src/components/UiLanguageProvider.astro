@@ -1,0 +1,256 @@
+<script is:inline>
+	const uiMessages = {
+		en: {
+			"aria.contentLanguage": "Content language",
+			"aria.mainMenu": "Main menu",
+			"aria.openMainMenu": "Open main menu",
+			"aria.setUiLanguage": "Set UI language to {language}",
+			"aria.viewLanguage": "View {language} posts",
+			"aria.viewMoreTag": "View more blogs with the tag",
+			"common.allPosts": "All posts",
+			"common.allSeries": "All series",
+			"common.explore": "Explore",
+			"common.post": "post",
+			"common.posts": "posts",
+			"common.series": "Series",
+			"home.academia.description": "Research notes and academic records.",
+			"home.academia.title": "Academia",
+			"home.explore": "Explore",
+			"home.lang.description": "French, Korean, English, and language study.",
+			"home.lang.title": "Languages",
+			"home.math.description": "Algebra, foundations, and mathematical notes.",
+			"home.math.title": "Mathematics",
+			"home.projects.description": "Build logs and experiments.",
+			"home.projects.title": "Projects",
+			"home.read.description": "Books, papers, and long-form reading.",
+			"home.read.title": "Reading",
+			"home.recent": "Recent",
+			"home.tech.description": "Software, Rust, systems, and tools.",
+			"home.tech.title": "Technology",
+			"nav.about": "About",
+			"nav.academia": "Academia",
+			"nav.home": "Home",
+			"nav.lang": "Lang",
+			"nav.math": "Math",
+			"nav.posts": "Posts",
+			"nav.series": "Series",
+			"nav.tech": "Tech",
+			"post.language": "Language",
+			"post.updated": "Updated:",
+			"ui.language": "UI language",
+		},
+		fr: {
+			"aria.contentLanguage": "Langue du contenu",
+			"aria.mainMenu": "Menu principal",
+			"aria.openMainMenu": "Ouvrir le menu principal",
+			"aria.setUiLanguage": "Définir la langue de l'interface sur {language}",
+			"aria.viewLanguage": "Voir les articles en {language}",
+			"aria.viewMoreTag": "Voir plus d'articles avec le tag",
+			"common.allPosts": "Tous les articles",
+			"common.allSeries": "Toutes les séries",
+			"common.explore": "Explorer",
+			"common.post": "article",
+			"common.posts": "articles",
+			"common.series": "Séries",
+			"home.academia.description": "Notes de recherche et traces académiques.",
+			"home.academia.title": "Académie",
+			"home.explore": "Explorer",
+			"home.lang.description": "Français, coréen, anglais et apprentissage des langues.",
+			"home.lang.title": "Langues",
+			"home.math.description": "Algèbre, fondements et notes mathématiques.",
+			"home.math.title": "Mathématiques",
+			"home.projects.description": "Journaux de construction et expériences.",
+			"home.projects.title": "Projets",
+			"home.read.description": "Livres, articles et lectures longues.",
+			"home.read.title": "Lectures",
+			"home.recent": "Récents",
+			"home.tech.description": "Logiciels, Rust, systèmes et outils.",
+			"home.tech.title": "Technologie",
+			"nav.about": "À propos",
+			"nav.academia": "Académie",
+			"nav.home": "Accueil",
+			"nav.lang": "Langues",
+			"nav.math": "Maths",
+			"nav.posts": "Articles",
+			"nav.series": "Séries",
+			"nav.tech": "Tech",
+			"post.language": "Langue",
+			"post.updated": "Mis à jour :",
+			"ui.language": "Langue de l'interface",
+		},
+		ko: {
+			"aria.contentLanguage": "콘텐츠 언어",
+			"aria.mainMenu": "기본 메뉴",
+			"aria.openMainMenu": "기본 메뉴 열기",
+			"aria.setUiLanguage": "UI 언어를 {language}(으)로 설정",
+			"aria.viewLanguage": "{language} 글 보기",
+			"aria.viewMoreTag": "이 태그의 글 더 보기",
+			"common.allPosts": "모든 글",
+			"common.allSeries": "모든 시리즈",
+			"common.explore": "탐색",
+			"common.post": "글",
+			"common.posts": "글",
+			"common.series": "시리즈",
+			"home.academia.description": "연구 노트와 학술 기록.",
+			"home.academia.title": "학술",
+			"home.explore": "탐색",
+			"home.lang.description": "프랑스어, 한국어, 영어와 언어 학습.",
+			"home.lang.title": "언어",
+			"home.math.description": "대수학, 기초론, 수학 노트.",
+			"home.math.title": "수학",
+			"home.projects.description": "제작 기록과 실험.",
+			"home.projects.title": "프로젝트",
+			"home.read.description": "책, 논문, 긴 글 읽기.",
+			"home.read.title": "읽기",
+			"home.recent": "최근 글",
+			"home.tech.description": "소프트웨어, Rust, 시스템과 도구.",
+			"home.tech.title": "기술",
+			"nav.about": "소개",
+			"nav.academia": "학술",
+			"nav.home": "홈",
+			"nav.lang": "언어",
+			"nav.math": "수학",
+			"nav.posts": "글",
+			"nav.series": "시리즈",
+			"nav.tech": "기술",
+			"post.language": "언어",
+			"post.updated": "업데이트:",
+			"ui.language": "UI 언어",
+		},
+		zh: {
+			"aria.contentLanguage": "内容语言",
+			"aria.mainMenu": "主菜单",
+			"aria.openMainMenu": "打开主菜单",
+			"aria.setUiLanguage": "将界面语言设为{language}",
+			"aria.viewLanguage": "查看 {language} 文章",
+			"aria.viewMoreTag": "查看更多带有该标签的文章",
+			"common.allPosts": "全部文章",
+			"common.allSeries": "全部系列",
+			"common.explore": "探索",
+			"common.post": "篇文章",
+			"common.posts": "篇文章",
+			"common.series": "系列",
+			"home.academia.description": "研究笔记与学术记录。",
+			"home.academia.title": "学术",
+			"home.explore": "探索",
+			"home.lang.description": "法语、韩语、英语与语言学习。",
+			"home.lang.title": "语言",
+			"home.math.description": "代数、基础与数学笔记。",
+			"home.math.title": "数学",
+			"home.projects.description": "项目记录与实验。",
+			"home.projects.title": "项目",
+			"home.read.description": "书籍、论文与长篇阅读。",
+			"home.read.title": "阅读",
+			"home.recent": "最近文章",
+			"home.tech.description": "软件、Rust、系统与工具。",
+			"home.tech.title": "技术",
+			"nav.about": "关于",
+			"nav.academia": "学术",
+			"nav.home": "首页",
+			"nav.lang": "语言",
+			"nav.math": "数学",
+			"nav.posts": "文章",
+			"nav.series": "系列",
+			"nav.tech": "技术",
+			"post.language": "语言",
+			"post.updated": "更新：",
+			"ui.language": "界面语言",
+		},
+	};
+
+	const languageNames = {
+		en: { en: "English", fr: "anglais", ko: "영어", zh: "英文" },
+		fr: { en: "French", fr: "français", ko: "프랑스어", zh: "法语" },
+		ko: { en: "Korean", fr: "coréen", ko: "한국어", zh: "韩语" },
+		zh: { en: "Chinese", fr: "chinois", ko: "중국어", zh: "中文" },
+	};
+	const UI_LANGUAGE_STORAGE_KEY = "ui-language";
+
+	function normalizeUiLanguage(lang) {
+		if (!lang) return "en";
+		const normalized = lang.toLowerCase();
+		if (normalized.startsWith("zh")) return "zh";
+		if (normalized.startsWith("fr")) return "fr";
+		if (normalized.startsWith("ko")) return "ko";
+		return "en";
+	}
+
+	function getBrowserLanguage() {
+		const lang = navigator.language?.toLowerCase() ?? "en";
+		return normalizeUiLanguage(lang);
+	}
+
+	function getStoredUiLanguage() {
+		try {
+			const stored = localStorage.getItem(UI_LANGUAGE_STORAGE_KEY);
+			return stored ? normalizeUiLanguage(stored) : null;
+		} catch {
+			return null;
+		}
+	}
+
+	function getUiLanguage() {
+		return getStoredUiLanguage() ?? getBrowserLanguage();
+	}
+
+	function format(message, values) {
+		return Object.entries(values).reduce(
+			(text, [key, value]) => text.replaceAll(`{${key}}`, value),
+			message,
+		);
+	}
+
+	function updateUiLanguageButtons(uiLanguage) {
+		document.querySelectorAll("[data-ui-language-button]").forEach((element) => {
+			const isCurrent = element.dataset.languageCode === uiLanguage;
+			element.setAttribute("aria-pressed", isCurrent.toString());
+			element.dataset.current = isCurrent.toString();
+		});
+	}
+
+	function applyUiLanguage(nextLanguage) {
+		const uiLanguage = nextLanguage ? normalizeUiLanguage(nextLanguage) : getUiLanguage();
+		const messages = uiMessages[uiLanguage] ?? uiMessages.en;
+		document.documentElement.dataset.uiLang = uiLanguage;
+		document.documentElement.lang = uiLanguage;
+
+		document.querySelectorAll("[data-i18n]").forEach((element) => {
+			const key = element.dataset.i18n;
+			if (key && messages[key]) element.textContent = messages[key];
+		});
+
+		document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+			const key = element.dataset.i18nAriaLabel;
+			if (!key || !messages[key]) return;
+			const language = element.dataset.languageCode;
+			const languageName = language ? (languageNames[language]?.[uiLanguage] ?? language) : "";
+			element.setAttribute("aria-label", format(messages[key], { language: languageName }));
+		});
+
+		updateUiLanguageButtons(uiLanguage);
+	}
+
+	function bindUiLanguageButtons() {
+		document.querySelectorAll("[data-ui-language-button]").forEach((element) => {
+			if (element.dataset.bound === "true") return;
+			element.dataset.bound = "true";
+			element.addEventListener("click", () => {
+				const nextLanguage = element.dataset.languageCode;
+				if (!nextLanguage) return;
+				try {
+					localStorage.setItem(UI_LANGUAGE_STORAGE_KEY, normalizeUiLanguage(nextLanguage));
+				} catch {
+					// Ignore storage failures; the immediate language switch still works.
+				}
+				applyUiLanguage(nextLanguage);
+			});
+		});
+	}
+
+	applyUiLanguage();
+	bindUiLanguageButtons();
+	document.addEventListener("astro:page-load", () => {
+		applyUiLanguage();
+		bindUiLanguageButtons();
+	});
+</script>

@@ -3,6 +3,7 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
+@import "katex/dist/katex.min.css";
 
 /* tailwind to ignore satori generated og-image */
 @source not "../pages/og-image";
@@ -51,16 +52,25 @@
 
 /* you could refactor below to use light-dark(), depending on your target audience */
 @theme {
-	--color-global-bg: oklch(98.48% 0 0);
-	--color-global-text: oklch(26.99% 0.0096 235.05);
-	--color-muted: oklch(44.6% 0.03 256.802);
-	--color-link: oklch(55.44% 0.0431 185.69);
-	--color-accent: oklch(55.27% 0.195 19.06);
-	--color-accent-2: oklch(18.15% 0 0);
-	--color-quote: oklch(55.27% 0.195 19.06);
+	--color-global-bg: #f5f1e8;
+	--color-global-text: #2f2922;
+	--color-muted: #6f6254;
+	--color-link: #276b60;
+	--color-accent: #9a3f2f;
+	--color-accent-2: #211b16;
+	--color-quote: #7b4a2f;
 }
 
 @layer base {
+	:root {
+		--font-ui:
+			Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+		--font-serif:
+			"EB Garamond", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", "Kaiti SC",
+			KaiTi, STKaiti, serif;
+		--font-code: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+	}
+
 	html {
 		color-scheme: light dark;
 		accent-color: var(--color-accent);
@@ -72,13 +82,13 @@
 
 		&[data-theme="dark"] {
 			color-scheme: dark;
-			--color-global-bg: oklch(23.64% 0.0045 248);
-			--color-global-text: oklch(83.54% 0 264);
-			--color-muted: oklch(70.7% 0.022 261.325);
-			--color-link: oklch(70.44% 0.1133 349);
-			--color-accent: oklch(70.91% 0.1415 163.7);
-			--color-accent-2: oklch(94.66% 0 0);
-			--color-quote: oklch(94.8% 0.106 136.49);
+			--color-global-bg: #1f1c19;
+			--color-global-text: #e8dfcf;
+			--color-muted: #b8ab98;
+			--color-link: #8dcfc1;
+			--color-accent: #e19675;
+			--color-accent-2: #fff7e8;
+			--color-quote: #e0b084;
 		}
 
 		--color-mode-transition-duration: 300ms;
@@ -92,6 +102,36 @@
 			--color-accent var(--color-mode-transition-duration) var(--color-mode-transition-easing),
 			--color-accent-2 var(--color-mode-transition-duration) var(--color-mode-transition-easing),
 			--color-quote var(--color-mode-transition-duration) var(--color-mode-transition-easing);
+	}
+
+	body {
+		background:
+			linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(80, 52, 24, 0.025) 1px, transparent 1px), var(--color-global-bg);
+		background-size:
+			100% 32px,
+			34px 100%,
+			auto;
+		font-family: var(--font-ui);
+	}
+
+	code,
+	kbd,
+	pre,
+	samp {
+		font-family: var(--font-code);
+	}
+
+	.katex {
+		color: var(--color-global-text);
+		font-size: 1.05em;
+	}
+
+	.katex-display {
+		margin-block: 1.75rem;
+		overflow-x: auto;
+		overflow-y: hidden;
+		padding-block: 0.25rem;
 	}
 
 	:target {
@@ -124,11 +164,15 @@
 	}
 
 	.title {
+		font-family: var(--font-ui);
 		@apply text-accent-2 text-2xl font-semibold;
 	}
 }
 
 @utility prose {
+	font-family: var(--font-serif);
+	font-size: 1.05rem;
+	line-height: 1.85;
 	--tw-prose-body: var(--color-global-text);
 	--tw-prose-bold: var(--color-global-text);
 	--tw-prose-bullets: var(--color-global-text);
@@ -138,4 +182,17 @@
 	--tw-prose-links: var(--color-global-text);
 	--tw-prose-quotes: var(--color-quote);
 	--tw-prose-th-borders: #666;
+
+	:where(h1, h2, h3, h4, h5, h6) {
+		font-family: var(--font-ui);
+		letter-spacing: 0;
+	}
+
+	:where(code, kbd, pre, samp, .expressive-code *) {
+		font-family: var(--font-code);
+	}
+
+	:where(.katex, .katex *) {
+		color: var(--color-global-text);
+	}
 }
