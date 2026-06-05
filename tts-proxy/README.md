@@ -80,4 +80,6 @@ tts.cliffordchen.org {
 - `HOST` defaults to `127.0.0.1`, so the service is reachable only through Caddy.
 - The VPS firewall does not need a new public port for this service.
 - `/speak` has a small in-memory per-IP rate limit. Adjust `RATE_LIMIT_WINDOW_MS` and `RATE_LIMIT_MAX_REQUESTS` if needed.
+- Cache misses are capped by `DAILY_REQUEST_LIMIT` and `DAILY_CHARACTER_LIMIT` before calling ElevenLabs.
+- Upstream failures such as payment or quota errors are cached briefly with `UPSTREAM_FAILURE_CACHE_MS`.
 - Audio is cached on disk under `.cache/audio` to avoid repeated ElevenLabs usage for the same phrase.

@@ -16,7 +16,10 @@ const KOREAN_VOICE_ID = process.env.ELEVENLABS_KOREAN_VOICE_ID ?? DEFAULT_VOICE_
 const MAX_TEXT_LENGTH = Number(process.env.MAX_TEXT_LENGTH ?? 500);
 const CACHE_DIR = process.env.CACHE_DIR ?? ".cache/audio";
 const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000);
-const RATE_LIMIT_MAX_REQUESTS = Number(process.env.RATE_LIMIT_MAX_REQUESTS ?? 30);
+const RATE_LIMIT_MAX_REQUESTS = Number(process.env.RATE_LIMIT_MAX_REQUESTS ?? 10);
+const DAILY_REQUEST_LIMIT = Number(process.env.DAILY_REQUEST_LIMIT ?? 50);
+const DAILY_CHARACTER_LIMIT = Number(process.env.DAILY_CHARACTER_LIMIT ?? 5_000);
+const UPSTREAM_FAILURE_CACHE_MS = Number(process.env.UPSTREAM_FAILURE_CACHE_MS ?? 600_000);
 const ALLOWED_ORIGINS = new Set(
 	(process.env.ALLOWED_ORIGINS ?? "https://cliffordchen.org")
 		.split(",")
@@ -66,7 +69,18 @@ app.post("/speak", async (req, res) => {
 		const cached = await readCachedAudio(cachePath);
 		if (cached) return sendAudio(res, cached, "HIT");
 
-		const audio = await synthesizeWithElevenLabs({ text, voiceId });
+		const failureCachePath = getFailureCachePath({ text, voiceId });
+		const cachedFailure = await readCachedFailure(failureCachePath);
+		if (cachedFailure) throw httpError(cachedFailure.statusCode, cachedFailure.message);
+
+		await enforceDailyUsageLimit(text);
+		let audio;
+		try {
+			audio = await synthesizeWithElevenLabs({ text, voiceId });
+		} catch (error) {
+			await writeCachedFailure(failureCachePath, error);
+			throw error;
+		}
 		await writeCachedAudio(cachePath, audio);
 		return sendAudio(res, audio, "MISS");
 	} catch (error) {
@@ -126,6 +140,14 @@ function getCachePath({ text, voiceId }) {
 	return path.join(CACHE_DIR, `${hash}.mp3`);
 }
 
+function getFailureCachePath({ text, voiceId }) {
+	const hash = crypto
+		.createHash("sha256")
+		.update(`${ELEVENLABS_MODEL}:${voiceId}:${text}`)
+		.digest("hex");
+	return path.join(CACHE_DIR, "failures", `${hash}.json`);
+}
+
 async function readCachedAudio(cachePath) {
 	try {
 		return await fs.readFile(cachePath);
@@ -135,9 +157,61 @@ async function readCachedAudio(cachePath) {
 	}
 }
 
+async function readCachedFailure(cachePath) {
+	try {
+		const cached = JSON.parse(await fs.readFile(cachePath, "utf8"));
+		if (Date.now() < cached.expiresAt) return cached;
+		await fs.unlink(cachePath);
+		return null;
+	} catch (error) {
+		if (error.code === "ENOENT") return null;
+		throw error;
+	}
+}
+
+async function writeCachedFailure(cachePath, error) {
+	const statusCode = error.statusCode ?? 500;
+	if (![402, 429, 500, 502, 503, 504].includes(statusCode)) return;
+	await fs.mkdir(path.dirname(cachePath), { recursive: true });
+	await fs.writeFile(
+		cachePath,
+		JSON.stringify({
+			statusCode,
+			message: error.message ?? "TTS upstream error.",
+			expiresAt: Date.now() + UPSTREAM_FAILURE_CACHE_MS,
+		}),
+	);
+}
+
 async function writeCachedAudio(cachePath, audio) {
 	await fs.mkdir(path.dirname(cachePath), { recursive: true });
 	await fs.writeFile(cachePath, audio);
+}
+
+async function enforceDailyUsageLimit(text) {
+	const usagePath = path.join(CACHE_DIR, "usage", `${new Date().toISOString().slice(0, 10)}.json`);
+	const usage = await readDailyUsage(usagePath);
+	const nextRequests = usage.requests + 1;
+	const nextCharacters = usage.characters + text.length;
+
+	if (nextRequests > DAILY_REQUEST_LIMIT) {
+		throw httpError(429, `Daily TTS request limit reached. Maximum is ${DAILY_REQUEST_LIMIT} upstream requests per day.`);
+	}
+	if (nextCharacters > DAILY_CHARACTER_LIMIT) {
+		throw httpError(429, `Daily TTS character limit reached. Maximum is ${DAILY_CHARACTER_LIMIT} characters per day.`);
+	}
+
+	await fs.mkdir(path.dirname(usagePath), { recursive: true });
+	await fs.writeFile(usagePath, JSON.stringify({ requests: nextRequests, characters: nextCharacters }));
+}
+
+async function readDailyUsage(usagePath) {
+	try {
+		return JSON.parse(await fs.readFile(usagePath, "utf8"));
+	} catch (error) {
+		if (error.code === "ENOENT") return { requests: 0, characters: 0 };
+		throw error;
+	}
 }
 
 async function synthesizeWithElevenLabs({ text, voiceId }) {
