@@ -8,24 +8,29 @@ Phase 9 的目标是为文章页接入评论系统，优先使用 giscus。
 
 清单：
 
-- [ ] 在 GitHub repo 开启 Discussions。
-- [ ] 安装 giscus GitHub App。
-- [ ] 从 giscus.app 获取配置 ID。
+- [x] 在 GitHub repo 开启 Discussions。
+- [x] 安装 giscus GitHub App。
+- [x] 从 giscus.app 获取配置 ID。
 - [x] 在文章页 layout 中加入 giscus。
-- [ ] 本地或部署后验证评论区显示。
-- [ ] 如果 giscus 配置困难，再考虑 utterances。
+- [x] 本地或部署后验证评论区显示。
+- [x] 如果 giscus 配置困难，再考虑 utterances。
 
 ## 当前状态
 
-代码层已经完成，GitHub 侧配置还需要你手动完成。
+Phase 9 已完成并在线上验证。
 
-原因：
+已完成：
 
-- Discussions 开关在 GitHub 仓库设置里。
-- giscus GitHub App 需要仓库 owner 授权。
-- `repoId` 和 `categoryId` 需要从 giscus.app 根据仓库实时生成。
+- GitHub repo 已开启 Discussions。
+- giscus GitHub App 已安装并授权到 `vcorange-chan/personal-blog`。
+- giscus 配置 ID 已从 giscus.app 获取并回填。
+- 普通文章页底部已显示 `Comments` 区块和 giscus 评论框。
+- 用户已在线上确认评论区可见。
 
-在这三个值没有填入前，评论组件默认不会显示，避免线上页面加载一个配置不完整的 giscus。
+说明：
+
+- `layout: immersive` 的完整互动文章仍不显示评论区，避免破坏沉浸式页面体验。
+- 普通 Markdown/MDX 文章显示评论区。
 
 ## 实际改动
 
@@ -41,19 +46,20 @@ Phase 9 的目标是为文章页接入评论系统，优先使用 giscus。
 ```ts
 comments: {
   giscus: {
-    enabled: false,
+    category: "Announcements",
+    categoryId: "DIC_kwDOJzYVeM4CYlzC",
+    enabled: true,
     repo: "vcorange-chan/personal-blog",
-    repoId: "",
-    category: "General",
-    categoryId: "",
+    repoId: "1259471368",
   },
 },
 ```
 
 说明：
 
-- `enabled: false` 是安全默认值。
-- 当 GitHub 和 giscus 配置完成后，把 `enabled` 改成 `true`，并填入 `repoId`、`categoryId`。
+- `enabled: true` 表示评论系统已启用。
+- giscus 使用 GitHub Discussions，不需要在仓库中保存任何 token 或密钥。
+- 当前 category 使用 `Announcements`。
 
 ### 2. 新增 giscus 组件
 
@@ -94,7 +100,7 @@ data-theme="preferred_color_scheme"
 - 在普通文章正文后显示评论区。
 - `layout: immersive` 的文章暂时不显示评论区，避免完整互动 HTML 页面底部被评论区打断。
 
-## 你需要手动完成的步骤
+## 已完成的 GitHub 侧步骤
 
 ### 1. 开启 GitHub Discussions
 
@@ -104,18 +110,9 @@ data-theme="preferred_color_scheme"
 https://github.com/vcorange-chan/personal-blog
 ```
 
-操作：
+状态：
 
-1. 打开 `Settings`。
-2. 找到 `Features`。
-3. 勾选 `Discussions`。
-4. 保存。
-
-建议创建或保留一个 discussion category，例如：
-
-```text
-General
-```
+已完成。
 
 ### 2. 安装 giscus GitHub App
 
@@ -125,18 +122,9 @@ General
 https://github.com/apps/giscus
 ```
 
-操作：
+状态：
 
-1. 点击 `Install`。
-2. 选择你的 GitHub 账号或组织。
-3. 选择 `Only select repositories`。
-4. 选择：
-
-```text
-vcorange-chan/personal-blog
-```
-
-5. 点击安装/授权。
+已完成。
 
 ### 3. 从 giscus.app 获取配置
 
@@ -146,22 +134,16 @@ vcorange-chan/personal-blog
 https://giscus.app/
 ```
 
-填写：
+实际配置：
 
 ```text
 Repository: vcorange-chan/personal-blog
 Page ↔ Discussions Mapping: pathname
-Discussion Category: General
+Discussion Category: Announcements
 Features: reactions enabled
 Theme: preferred_color_scheme
-```
-
-然后复制页面生成的配置中的：
-
-```text
-data-repo-id
-data-category
-data-category-id
+Repository ID: 1259471368
+Category ID: DIC_kwDOJzYVeM4CYlzC
 ```
 
 ### 4. 回填配置
@@ -172,44 +154,37 @@ data-category-id
 src/site.config.ts
 ```
 
-把：
+已回填为：
 
 ```ts
 comments: {
   giscus: {
-    category: "General",
-    categoryId: "",
-    enabled: false,
-    repo: "vcorange-chan/personal-blog",
-    repoId: "",
-  },
-},
-```
-
-改成类似：
-
-```ts
-comments: {
-  giscus: {
-    category: "General",
-    categoryId: "你的 data-category-id",
+    category: "Announcements",
+    categoryId: "DIC_kwDOJzYVeM4CYlzC",
     enabled: true,
     repo: "vcorange-chan/personal-blog",
-    repoId: "你的 data-repo-id",
+    repoId: "1259471368",
   },
 },
 ```
 
 不要把 GitHub token 或任何密钥放进这里。giscus 不需要密钥。
 
-## 验证方式
+## 验证方式与结果
 
-回填配置后执行：
+已执行：
 
 ```powershell
 npm run build
 npm run check
 ```
+
+结果：
+
+- `npm run build` 通过。
+- `npm run check` 通过。
+- 构建产物中普通文章页包含 `https://giscus.app/client.js`。
+- 用户已在线上看到评论区。
 
 本地运行：
 
@@ -233,12 +208,12 @@ https://blog.cliffordchen.org/posts/math/algebra/math-code-typesetting-test/
 
 ## Phase 9 状态
 
-- [ ] 让你在 GitHub repo 开启 Discussions。
-- [ ] 安装 giscus GitHub App。
-- [ ] 从 giscus.app 获取配置 ID。
+- [x] 让你在 GitHub repo 开启 Discussions。
+- [x] 安装 giscus GitHub App。
+- [x] 从 giscus.app 获取配置 ID。
 - [x] 在文章页 layout 中加入 giscus。
-- [ ] 本地或部署后验证评论区显示。
-- [ ] 如果 giscus 配置困难，再考虑 utterances。
+- [x] 本地或部署后验证评论区显示。
+- [x] 如果 giscus 配置困难，再考虑 utterances。
 
 ## 备用方案
 

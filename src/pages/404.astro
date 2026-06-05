@@ -2,12 +2,38 @@
 import PageLayout from "@/layouts/Base.astro";
 
 const meta = {
-	description: "Oops! It looks like this page is lost in space!",
-	title: "Oops! You found a missing page!",
+	description:
+		"The page could not be found. Continue from the blog home, posts, topics, or academia page.",
+	title: "Page not found",
 };
 ---
 
 <PageLayout meta={meta}>
-	<h1 class="title mb-12">404 | Oops something went wrong</h1>
-	<p class="mb-8">Please use the navigation to find your way back</p>
+	<section class="py-8">
+		<p class="text-accent mb-3 font-semibold">404</p>
+		<h1 class="title mb-5 text-3xl">Page not found</h1>
+		<p class="text-muted max-w-2xl text-base leading-7">
+			This page is not available, or the address may have changed. Choose a nearby door and keep
+			reading.
+		</p>
+	</section>
+
+	<nav aria-label="Helpful links" class="grid gap-3 sm:grid-cols-2">
+		<a class="border-muted/30 hover:border-accent rounded-md border p-4 transition-colors" href="/">
+			<span class="title block text-lg">Home</span>
+			<span class="text-muted mt-2 block leading-6">Return to the front page.</span>
+		</a>
+		<a class="border-muted/30 hover:border-accent rounded-md border p-4 transition-colors" href="/posts/">
+			<span class="title block text-lg">Posts</span>
+			<span class="text-muted mt-2 block leading-6">Browse all published notes.</span>
+		</a>
+		<a class="border-muted/30 hover:border-accent rounded-md border p-4 transition-colors" href="/tags/">
+			<span class="title block text-lg">Tags</span>
+			<span class="text-muted mt-2 block leading-6">Find writing by topic.</span>
+		</a>
+		<a class="border-muted/30 hover:border-accent rounded-md border p-4 transition-colors" href="/academia/">
+			<span class="title block text-lg">Academia</span>
+			<span class="text-muted mt-2 block leading-6">Open publications, reading notes, and work in progress.</span>
+		</a>
+	</nav>
 </PageLayout>

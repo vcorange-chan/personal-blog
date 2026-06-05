@@ -6,8 +6,8 @@ export const GET = async () => {
 	const posts = await getAllPosts();
 
 	return rss({
-		title: siteConfig.title,
-		description: siteConfig.description,
+		title: `${siteConfig.title} - Blog`,
+		description: `${siteConfig.description} Notes on mathematics, software, academia, languages, and reading.`,
 		site: import.meta.env.SITE,
 		items: posts.map((post) => ({
 			title: post.data.title,
