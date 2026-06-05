@@ -1,0 +1,19 @@
+publications: []
+
+inProgress:
+  - title: "Algebra Chapter 0 reading notes"
+    status: "Reading notes"
+    description: "Structured notes and side comments while reading Algebra Chapter 0."
+    year: 2026
+    links:
+      - label: "Series"
+        url: "/series/algebra-ch0/"
+
+writing:
+  - title: "Mathematics, software, and long-form thinking"
+    status: "Essay draft"
+    description: "A working thread for turning study notes into publishable long-form essays."
+    year: 2026
+    links:
+      - label: "Posts"
+        url: "/posts/"
