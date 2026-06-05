@@ -1,0 +1,34 @@
+---
+import { siteConfig } from "@/site.config";
+
+const giscus = siteConfig.comments?.giscus;
+const isConfigured = Boolean(
+	giscus?.enabled && giscus.repo && giscus.repoId && giscus.category && giscus.categoryId,
+);
+---
+
+{
+	isConfigured && giscus && (
+		<section class="mt-20 border-muted/30 border-t pt-10" id="comments">
+			<h2 class="title mb-6 text-xl">Comments</h2>
+			<script
+				async
+				crossorigin="anonymous"
+				is:inline
+				data-category={giscus.category}
+				data-category-id={giscus.categoryId}
+				data-emit-metadata="0"
+				data-input-position="top"
+				data-lang="en"
+				data-loading="lazy"
+				data-mapping="pathname"
+				data-reactions-enabled="1"
+				data-repo={giscus.repo}
+				data-repo-id={giscus.repoId}
+				data-strict="0"
+				data-theme="preferred_color_scheme"
+				src="https://giscus.app/client.js"
+			/>
+		</section>
+	)
+}

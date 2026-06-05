@@ -15,6 +15,15 @@ export const siteConfig: SiteConfig = {
 	author: "Clifford Chen",
 	// Used as the default description meta property and webmanifest description
 	description: "A place for mathematics, software, and long-form thinking.",
+	comments: {
+		giscus: {
+			category: "Announcements",
+			categoryId: "DIC_kwDOJzYVeM4CYlzC",
+			enabled: true,
+			repo: "vcorange-chan/personal-blog",
+			repoId: "1259471368",
+		},
+	},
 	// HTML lang property, found in src/layouts/Base.astro L:18 & astro.config.ts L:48
 	lang: "en",
 	// Meta property, found in src/components/BaseHead.astro L:42

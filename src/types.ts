@@ -1,5 +1,14 @@
 export interface SiteConfig {
 	author: string;
+	comments?: {
+		giscus?: {
+			category: string;
+			categoryId: string;
+			enabled: boolean;
+			repo: `${string}/${string}`;
+			repoId: string;
+		};
+	};
 	date: {
 		locale: string | string[] | undefined;
 		options: Intl.DateTimeFormatOptions;
