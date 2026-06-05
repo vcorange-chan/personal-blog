@@ -28,13 +28,24 @@ Copy `.env.example` to `.env` on the VPS and fill in:
 HOST=127.0.0.1
 PORT=8787
 ELEVENLABS_API_KEY=...
+ELEVENLABS_DEFAULT_VOICE_ID=...
 ELEVENLABS_FRENCH_VOICE_ID=...
+ELEVENLABS_KOREAN_VOICE_ID=...
 ALLOWED_ORIGINS=https://cliffordchen.org
 ```
 
 Do not commit `.env`.
 
 ## Local Run
+
+Voice mapping:
+
+```json
+{ "voice": "french" }
+{ "voice": "fr" }
+{ "voice": "korean" }
+{ "voice": "ko" }
+```
 
 ```bash
 cd tts-proxy
