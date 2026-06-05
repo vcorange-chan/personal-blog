@@ -1208,7 +1208,7 @@
 
   function setVoiceStatus(message) {
     const banner = document.getElementById('voice-status');
-    if (banner) banner.innerHTML = message;
+    if (banner) banner.textContent = message;
   }
 
   async function speak(text) {

@@ -20,6 +20,10 @@ const RATE_LIMIT_MAX_REQUESTS = Number(process.env.RATE_LIMIT_MAX_REQUESTS ?? 20
 const DAILY_REQUEST_LIMIT = Number(process.env.DAILY_REQUEST_LIMIT ?? 200);
 const DAILY_CHARACTER_LIMIT = Number(process.env.DAILY_CHARACTER_LIMIT ?? 7_000);
 const UPSTREAM_FAILURE_CACHE_MS = Number(process.env.UPSTREAM_FAILURE_CACHE_MS ?? 600_000);
+const ALLOW_MISSING_ORIGIN = process.env.ALLOW_MISSING_ORIGIN === "true";
+const CACHE_MAX_BYTES = Number(process.env.CACHE_MAX_BYTES ?? 100 * 1024 * 1024);
+const CACHE_MAX_AGE_DAYS = Number(process.env.CACHE_MAX_AGE_DAYS ?? 90);
+const CACHE_CLEANUP_INTERVAL_MS = Number(process.env.CACHE_CLEANUP_INTERVAL_MS ?? 6 * 60 * 60 * 1000);
 const ALLOWED_ORIGINS = new Set(
 	(process.env.ALLOWED_ORIGINS ?? "https://cliffordchen.org")
 		.split(",")
@@ -51,6 +55,7 @@ app.get("/health", (_req, res) => {
 
 app.post("/speak", async (req, res) => {
 	try {
+		enforceAllowedOrigin(req);
 		enforceRateLimit(req);
 		const text = normalizeText(req.body?.text);
 		const voice = normalizeVoice(req.body?.voice);
@@ -92,6 +97,15 @@ app.post("/speak", async (req, res) => {
 app.listen(PORT, HOST, () => {
 	console.log(`TTS proxy listening on http://${HOST}:${PORT}`);
 });
+
+scheduleCacheCleanup();
+
+function enforceAllowedOrigin(req) {
+	const origin = req.get("origin");
+	if (!origin && ALLOW_MISSING_ORIGIN) return;
+	if (origin && ALLOWED_ORIGINS.has(origin)) return;
+	throw httpError(403, "TTS requests are not allowed from this origin.");
+}
 
 function enforceRateLimit(req) {
 	const now = Date.now();
@@ -211,6 +225,87 @@ async function readDailyUsage(usagePath) {
 	} catch (error) {
 		if (error.code === "ENOENT") return { requests: 0, characters: 0 };
 		throw error;
+	}
+}
+
+function scheduleCacheCleanup() {
+	cleanupCache().catch((error) => {
+		console.warn("TTS cache cleanup failed:", error);
+	});
+
+	setInterval(() => {
+		cleanupCache().catch((error) => {
+			console.warn("TTS cache cleanup failed:", error);
+		});
+	}, CACHE_CLEANUP_INTERVAL_MS).unref();
+}
+
+async function cleanupCache() {
+	const files = await listCacheFiles(CACHE_DIR);
+	const now = Date.now();
+	const maxAgeMs = CACHE_MAX_AGE_DAYS * 24 * 60 * 60 * 1000;
+	const remaining = [];
+
+	for (const file of files) {
+		if (file.path.endsWith(".json") && file.path.includes(`${path.sep}failures${path.sep}`)) {
+			const failure = await readJsonOrNull(file.path);
+			if (!failure || now >= failure.expiresAt) {
+				await deleteFileIfExists(file.path);
+				continue;
+			}
+		}
+
+		if (now - file.mtimeMs > maxAgeMs) {
+			await deleteFileIfExists(file.path);
+			continue;
+		}
+
+		remaining.push(file);
+	}
+
+	let totalBytes = remaining.reduce((sum, file) => sum + file.size, 0);
+	if (totalBytes <= CACHE_MAX_BYTES) return;
+
+	remaining.sort((a, b) => a.mtimeMs - b.mtimeMs);
+	for (const file of remaining) {
+		await deleteFileIfExists(file.path);
+		totalBytes -= file.size;
+		if (totalBytes <= CACHE_MAX_BYTES) return;
+	}
+}
+
+async function listCacheFiles(dir) {
+	try {
+		const entries = await fs.readdir(dir, { withFileTypes: true });
+		const nested = await Promise.all(
+			entries.map(async (entry) => {
+				const entryPath = path.join(dir, entry.name);
+				if (entry.isDirectory()) return listCacheFiles(entryPath);
+				if (!entry.isFile()) return [];
+				const stats = await fs.stat(entryPath);
+				return [{ path: entryPath, size: stats.size, mtimeMs: stats.mtimeMs }];
+			}),
+		);
+		return nested.flat();
+	} catch (error) {
+		if (error.code === "ENOENT") return [];
+		throw error;
+	}
+}
+
+async function readJsonOrNull(filePath) {
+	try {
+		return JSON.parse(await fs.readFile(filePath, "utf8"));
+	} catch {
+		return null;
+	}
+}
+
+async function deleteFileIfExists(filePath) {
+	try {
+		await fs.unlink(filePath);
+	} catch (error) {
+		if (error.code !== "ENOENT") throw error;
 	}
 }
 
