@@ -48,6 +48,9 @@ export const menuLinks: { path: string; title: string }[] = [
 		path: "/series/",
 		title: "Series",
 	},
+];
+
+export const exploreLinks: { path: string; title: string }[] = [
 	{
 		path: "/math/",
 		title: "Math",

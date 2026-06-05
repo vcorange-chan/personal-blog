@@ -1,8 +1,11 @@
 ---
 import LanguageSwitch from "@/components/LanguageSwitch.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
-import { menuLinks } from "@/site.config";
+import { exploreLinks, menuLinks } from "@/site.config";
 import { siteConfig } from "../../site.config";
+
+const currentPath = Astro.url.pathname;
+const isExploreCurrent = exploreLinks.some((link) => currentPath.startsWith(link.path));
 ---
 
 <header class="group relative mb-24 flex items-center" id="main-header">
@@ -28,7 +31,7 @@ import { siteConfig } from "../../site.config";
 			{
 				menuLinks.map((link) => (
 					<a
-						aria-current={Astro.url.pathname === link.path ? "page" : false}
+						aria-current={currentPath === link.path ? "page" : false}
 						class="text-accent px-2 py-4 font-semibold sm:px-4 sm:py-0 sm:underline-offset-2 sm:hover:underline"
 						href={link.path}
 					>
@@ -36,6 +39,32 @@ import { siteConfig } from "../../site.config";
 					</a>
 				))
 			}
+			<div class="relative sm:ps-4">
+				<button
+					aria-current={isExploreCurrent ? "page" : false}
+					aria-expanded="false"
+					class="text-accent flex w-full cursor-pointer items-center justify-between px-2 py-4 font-semibold sm:w-auto sm:px-0 sm:py-0 sm:underline-offset-2 sm:hover:underline"
+					type="button"
+				>
+					Explore
+					<span aria-hidden="true" class="ms-1 text-xs">v</span>
+				</button>
+				<div
+					class="bg-global-bg border-muted/30 hidden min-w-36 flex-col border-t sm:absolute sm:start-0 sm:top-6 sm:z-50 sm:rounded-md sm:border sm:p-2 sm:shadow-sm"
+				>
+					{
+						exploreLinks.map((link) => (
+							<a
+								aria-current={currentPath === link.path ? "page" : false}
+								class="text-accent px-2 py-3 font-semibold sm:rounded sm:py-2 sm:hover:bg-zinc-100 sm:dark:hover:bg-zinc-800"
+								href={link.path}
+							>
+								{link.title}
+							</a>
+						))
+					}
+				</div>
+			</div>
 		</nav>
 	</div>
 	<LanguageSwitch />
@@ -90,11 +119,21 @@ import { siteConfig } from "../../site.config";
 		connectedCallback() {
 			const headerEl = document.getElementById("main-header")!;
 			const mobileButtonEl = this.querySelector<HTMLButtonElement>("button");
+			const exploreBtn = document.querySelector<HTMLButtonElement>("#navigation-menu button");
+			const exploreMenu = exploreBtn?.nextElementSibling as HTMLDivElement | null;
 
 			mobileButtonEl?.addEventListener("click", () => {
 				if (headerEl) toggleClass(headerEl, "menu-open");
 				this.#menuOpen = !this.#menuOpen;
 				mobileButtonEl.setAttribute("aria-expanded", this.#menuOpen.toString());
+			});
+
+			exploreBtn?.addEventListener("click", () => {
+				if (!exploreMenu) return;
+				const expanded = exploreBtn.getAttribute("aria-expanded") === "true";
+				exploreBtn.setAttribute("aria-expanded", (!expanded).toString());
+				exploreMenu.classList.toggle("hidden", expanded);
+				exploreMenu.classList.toggle("flex", !expanded);
 			});
 		}
 	}

@@ -69,7 +69,10 @@ try {
 
 	run("scp", [archive, `${webHost}:${remoteArchive}`]);
 	run("ssh", [webHost, deployCommand(webRoot, "https://blog.cliffordchen.org/")]);
-	run("ssh", [webHost, "curl -fsSI https://blog.cliffordchen.org/posts/lang/french/lecon-1-interactive/ >/dev/null"]);
+	run("ssh", [
+		webHost,
+		"curl -fsSI https://blog.cliffordchen.org/posts/lang/french/lecon-1-interactive/ >/dev/null",
+	]);
 
 	run("scp", [archive, `${sydneyHost}:${remoteArchive}`]);
 

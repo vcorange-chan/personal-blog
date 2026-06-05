@@ -23,7 +23,9 @@ const UPSTREAM_FAILURE_CACHE_MS = Number(process.env.UPSTREAM_FAILURE_CACHE_MS ?
 const ALLOW_MISSING_ORIGIN = process.env.ALLOW_MISSING_ORIGIN === "true";
 const CACHE_MAX_BYTES = Number(process.env.CACHE_MAX_BYTES ?? 100 * 1024 * 1024);
 const CACHE_MAX_AGE_DAYS = Number(process.env.CACHE_MAX_AGE_DAYS ?? 90);
-const CACHE_CLEANUP_INTERVAL_MS = Number(process.env.CACHE_CLEANUP_INTERVAL_MS ?? 6 * 60 * 60 * 1000);
+const CACHE_CLEANUP_INTERVAL_MS = Number(
+	process.env.CACHE_CLEANUP_INTERVAL_MS ?? 6 * 60 * 60 * 1000,
+);
 const ALLOWED_ORIGINS = new Set(
 	(process.env.ALLOWED_ORIGINS ?? "https://cliffordchen.org")
 		.split(",")
@@ -66,7 +68,8 @@ app.post("/speak", async (req, res) => {
 		}
 		if (!voiceId) {
 			return res.status(500).json({
-				error: "No ElevenLabs voice id configured. Set ELEVENLABS_FRENCH_VOICE_ID or ELEVENLABS_DEFAULT_VOICE_ID.",
+				error:
+					"No ElevenLabs voice id configured. Set ELEVENLABS_FRENCH_VOICE_ID or ELEVENLABS_DEFAULT_VOICE_ID.",
 			});
 		}
 
@@ -209,14 +212,23 @@ async function enforceDailyUsageLimit(text) {
 	const nextCharacters = usage.characters + text.length;
 
 	if (nextRequests > DAILY_REQUEST_LIMIT) {
-		throw httpError(429, `Daily TTS request limit reached. Maximum is ${DAILY_REQUEST_LIMIT} upstream requests per day.`);
+		throw httpError(
+			429,
+			`Daily TTS request limit reached. Maximum is ${DAILY_REQUEST_LIMIT} upstream requests per day.`,
+		);
 	}
 	if (nextCharacters > DAILY_CHARACTER_LIMIT) {
-		throw httpError(429, `Daily TTS character limit reached. Maximum is ${DAILY_CHARACTER_LIMIT} characters per day.`);
+		throw httpError(
+			429,
+			`Daily TTS character limit reached. Maximum is ${DAILY_CHARACTER_LIMIT} characters per day.`,
+		);
 	}
 
 	await fs.mkdir(path.dirname(usagePath), { recursive: true });
-	await fs.writeFile(usagePath, JSON.stringify({ requests: nextRequests, characters: nextCharacters }));
+	await fs.writeFile(
+		usagePath,
+		JSON.stringify({ requests: nextRequests, characters: nextCharacters }),
+	);
 }
 
 async function readDailyUsage(usagePath) {
