@@ -83,3 +83,4 @@ tts.cliffordchen.org {
 - Cache misses are capped by `DAILY_REQUEST_LIMIT` and `DAILY_CHARACTER_LIMIT` before calling ElevenLabs.
 - Upstream failures such as payment or quota errors are cached briefly with `UPSTREAM_FAILURE_CACHE_MS`.
 - Audio is cached on disk under `.cache/audio` to avoid repeated ElevenLabs usage for the same phrase.
+- Current conservative defaults are 20 requests per IP per minute, 200 upstream cache misses per day, and 7000 upstream characters per day.

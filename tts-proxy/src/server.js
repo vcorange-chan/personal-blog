@@ -16,9 +16,9 @@ const KOREAN_VOICE_ID = process.env.ELEVENLABS_KOREAN_VOICE_ID ?? DEFAULT_VOICE_
 const MAX_TEXT_LENGTH = Number(process.env.MAX_TEXT_LENGTH ?? 500);
 const CACHE_DIR = process.env.CACHE_DIR ?? ".cache/audio";
 const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000);
-const RATE_LIMIT_MAX_REQUESTS = Number(process.env.RATE_LIMIT_MAX_REQUESTS ?? 10);
-const DAILY_REQUEST_LIMIT = Number(process.env.DAILY_REQUEST_LIMIT ?? 50);
-const DAILY_CHARACTER_LIMIT = Number(process.env.DAILY_CHARACTER_LIMIT ?? 5_000);
+const RATE_LIMIT_MAX_REQUESTS = Number(process.env.RATE_LIMIT_MAX_REQUESTS ?? 20);
+const DAILY_REQUEST_LIMIT = Number(process.env.DAILY_REQUEST_LIMIT ?? 200);
+const DAILY_CHARACTER_LIMIT = Number(process.env.DAILY_CHARACTER_LIMIT ?? 7_000);
 const UPSTREAM_FAILURE_CACHE_MS = Number(process.env.UPSTREAM_FAILURE_CACHE_MS ?? 600_000);
 const ALLOWED_ORIGINS = new Set(
 	(process.env.ALLOWED_ORIGINS ?? "https://cliffordchen.org")
