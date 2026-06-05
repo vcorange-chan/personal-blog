@@ -5,6 +5,7 @@ import express from "express";
 
 const app = express();
 
+const HOST = process.env.HOST ?? "127.0.0.1";
 const PORT = Number(process.env.PORT ?? 8787);
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 const ELEVENLABS_MODEL = process.env.ELEVENLABS_MODEL ?? "eleven_multilingual_v2";
@@ -12,14 +13,18 @@ const DEFAULT_VOICE_ID = process.env.ELEVENLABS_DEFAULT_VOICE_ID;
 const FRENCH_VOICE_ID = process.env.ELEVENLABS_FRENCH_VOICE_ID ?? DEFAULT_VOICE_ID;
 const MAX_TEXT_LENGTH = Number(process.env.MAX_TEXT_LENGTH ?? 500);
 const CACHE_DIR = process.env.CACHE_DIR ?? ".cache/audio";
+const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000);
+const RATE_LIMIT_MAX_REQUESTS = Number(process.env.RATE_LIMIT_MAX_REQUESTS ?? 30);
 const ALLOWED_ORIGINS = new Set(
 	(process.env.ALLOWED_ORIGINS ?? "https://cliffordchen.org")
 		.split(",")
 		.map((origin) => origin.trim())
 		.filter(Boolean),
 );
+const rateLimitBuckets = new Map();
 
 app.disable("x-powered-by");
+app.set("trust proxy", "loopback");
 app.use(express.json({ limit: "16kb" }));
 
 app.use((req, res, next) => {
@@ -41,6 +46,7 @@ app.get("/health", (_req, res) => {
 
 app.post("/speak", async (req, res) => {
 	try {
+		enforceRateLimit(req);
 		const text = normalizeText(req.body?.text);
 		const voice = normalizeVoice(req.body?.voice);
 		const voiceId = getVoiceId(voice);
@@ -67,9 +73,25 @@ app.post("/speak", async (req, res) => {
 	}
 });
 
-app.listen(PORT, () => {
-	console.log(`TTS proxy listening on http://127.0.0.1:${PORT}`);
+app.listen(PORT, HOST, () => {
+	console.log(`TTS proxy listening on http://${HOST}:${PORT}`);
 });
+
+function enforceRateLimit(req) {
+	const now = Date.now();
+	const key = req.ip ?? "unknown";
+	const bucket = rateLimitBuckets.get(key);
+
+	if (!bucket || now >= bucket.resetAt) {
+		rateLimitBuckets.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+		return;
+	}
+
+	bucket.count += 1;
+	if (bucket.count > RATE_LIMIT_MAX_REQUESTS) {
+		throw httpError(429, "Too many TTS requests. Please try again later.");
+	}
+}
 
 function normalizeText(value) {
 	if (typeof value !== "string") throw httpError(400, "`text` must be a string.");
