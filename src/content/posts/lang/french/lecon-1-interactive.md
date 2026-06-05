@@ -11,6 +11,7 @@ tags:
   - interactive
 lang: zh
 description: "一份交互式法语学习笔记，主题是国籍、语言和课堂语言画像。"
+layout: immersive
 draft: false
 ---
 
@@ -24,8 +25,11 @@ draft: false
 
 <style>
 	.interactive-frame-shell {
-		border: 1px solid var(--color-muted);
-		border-radius: 0.75rem;
+		width: calc(100vw - 1rem);
+		height: min(92vh, 1100px);
+		margin-inline: calc(50% - 50vw + 0.5rem);
+		border: 1px solid color-mix(in oklch, var(--color-muted), transparent 55%);
+		border-radius: 0.5rem;
 		overflow: hidden;
 		background: #fafaf8;
 	}
@@ -33,7 +37,14 @@ draft: false
 	.interactive-frame-shell iframe {
 		display: block;
 		width: 100%;
-		min-height: 75vh;
+		height: 100%;
 		border: 0;
+	}
+
+	@media (min-width: 1024px) {
+		.interactive-frame-shell {
+			width: min(1200px, calc(100vw - 3rem));
+			margin-inline: calc((100% - min(1200px, calc(100vw - 3rem))) / 2);
+		}
 	}
 </style>

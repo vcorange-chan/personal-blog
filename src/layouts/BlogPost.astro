@@ -12,6 +12,7 @@ interface Props {
 
 const { post } = Astro.props;
 const { title, description, updatedDate, date } = post.data;
+const isImmersive = post.data.layout === "immersive";
 const socialImage = `/og-image/${post.id}.png`;
 const articleDate = updatedDate?.toISOString() ?? date.toISOString();
 const { headings, remarkPluginFrontmatter } = await render(post);
@@ -26,12 +27,16 @@ const readingTime: string = remarkPluginFrontmatter.readingTime;
 		title,
 	}}
 >
-	<article class="grow break-words">
+	<article class:list={["grow break-words", { "immersive-post": isImmersive }]}>
 		<div id="blog-hero" class="mb-12"><Masthead content={post} readingTime={readingTime} /></div>
 		<div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
-			{!!headings.length && <TOC headings={headings} />}
+			{!!headings.length && !isImmersive && <TOC headings={headings} />}
 			<div
-				class="prose prose-sm prose-headings:font-semibold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-muted prose-headings:hover:before:text-accent sm:prose-headings:before:content-['#'] sm:prose-th:before:content-none"
+				class:list={[
+					isImmersive
+						? "w-full max-w-none"
+						: "prose prose-sm prose-headings:font-semibold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-muted prose-headings:hover:before:text-accent sm:prose-headings:before:content-['#'] sm:prose-th:before:content-none",
+				]}
 			>
 				<slot />
 			</div>
