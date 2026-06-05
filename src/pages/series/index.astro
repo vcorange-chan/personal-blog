@@ -1,0 +1,35 @@
+---
+import { getAllPosts, getSeriesCounts, slugifyValue } from "@/data/post";
+import PageLayout from "@/layouts/Base.astro";
+
+const allPosts = await getAllPosts();
+const allSeries = getSeriesCounts(allPosts);
+
+const meta = {
+	description: "A list of all long-running post series.",
+	title: "Series",
+};
+---
+
+<PageLayout meta={meta}>
+	<h1 class="title mb-6">Series</h1>
+	<ul class="space-y-4">
+		{
+			allSeries.map(([series, count]) => (
+				<li class="flex items-center gap-x-2">
+					<a
+						class="cactus-link inline-block"
+						href={`/series/${slugifyValue(series)}/`}
+						title={`View posts in the series: ${series}`}
+					>
+						{series}
+					</a>
+					<span class="inline-block">
+						- {count} Post{count > 1 && "s"}
+					</span>
+				</li>
+			))
+		}
+	</ul>
+	{!allSeries.length && <p class="text-muted">No series yet.</p>}
+</PageLayout>

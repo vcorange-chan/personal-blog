@@ -1,27 +1,73 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import PostPreview from "@/components/blog/PostPreview.astro";
-import { getAllPosts } from "@/data/post";
+import { getAllPosts, getCategoryCounts, getSeriesCounts, slugifyValue } from "@/data/post";
 import PageLayout from "@/layouts/Base.astro";
+import { siteConfig } from "@/site.config";
 import { collectionDateSort } from "@/utils/date";
 
-// Posts
-const MAX_POSTS = 10;
+const categoryLabels = {
+	academia: {
+		description: "Research notes and academic records.",
+		href: "/academia/",
+		title: "Academia",
+	},
+	lang: {
+		description: "French, Korean, English, and language study.",
+		href: "/lang/",
+		title: "Languages",
+	},
+	math: {
+		description: "Algebra, foundations, and mathematical notes.",
+		href: "/math/",
+		title: "Mathematics",
+	},
+	projects: {
+		description: "Build logs and experiments.",
+		href: "/projects/",
+		title: "Projects",
+	},
+	read: {
+		description: "Books, papers, and long-form reading.",
+		href: "/read/",
+		title: "Reading",
+	},
+	tech: {
+		description: "Software, Rust, systems, and tools.",
+		href: "/tech/",
+		title: "Technology",
+	},
+} as const;
+
+const fixedCategories = [
+	"math",
+	"tech",
+	"projects",
+	"academia",
+	"lang",
+	"read",
+] as (keyof typeof categoryLabels)[];
+const MAX_POSTS = 3;
 const allPosts = await getAllPosts();
 const allPostsByDate = allPosts.sort(collectionDateSort) as CollectionEntry<"posts">[];
 const latestPosts = allPostsByDate.slice(0, MAX_POSTS);
-
+const categoryCountMap = new Map(getCategoryCounts(allPosts));
+const allSeries = getSeriesCounts(allPosts);
 ---
 
 <PageLayout meta={{ title: "Home" }}>
-	<section>
-		<h1 class="title mb-12">Clifford Chen</h1>
-		<p class="mb-4">
-			A place for mathematics, software, and long-form thinking.
+	<section class="mb-16">
+		<h1 class="title mb-5 text-3xl">Clifford Chen</h1>
+		<p class="text-muted max-w-2xl text-base leading-7">
+			{siteConfig.description}
 		</p>
 	</section>
-	<section class="mt-16">
-		<h2 class="title text-accent mb-6 text-xl"><a href="/posts/">Posts</a></h2>
+
+	<section class="mb-16">
+		<div class="mb-6 flex items-end justify-between gap-4">
+			<h2 class="title text-xl">Recent</h2>
+			<a class="cactus-link text-sm" href="/posts/">All posts</a>
+		</div>
 		<ul class="space-y-4" role="list">
 			{
 				latestPosts.map((p) => (
@@ -31,5 +77,59 @@ const latestPosts = allPostsByDate.slice(0, MAX_POSTS);
 				))
 			}
 		</ul>
+	</section>
+
+	<section class="mb-16">
+		<h2 class="title mb-6 text-xl">Explore</h2>
+		<ul class="grid gap-3 sm:grid-cols-2" role="list">
+			{
+				fixedCategories.map((category) => {
+					const item = categoryLabels[category];
+					const count = categoryCountMap.get(category) ?? 0;
+					return (
+						<li>
+							<a
+								class="border-muted/30 hover:border-accent block min-h-34 rounded-md border p-4 transition-colors"
+								href={item.href}
+							>
+								<span class="title block text-lg">{item.title}</span>
+								<span class="text-muted mt-2 block leading-6">{item.description}</span>
+								<span class="text-accent mt-4 block font-semibold">
+									{count} post{count === 1 ? "" : "s"}
+								</span>
+							</a>
+						</li>
+					);
+				})
+			}
+		</ul>
+	</section>
+
+	<section>
+		<div class="mb-6 flex items-end justify-between gap-4">
+			<h2 class="title text-xl">Series</h2>
+			<a class="cactus-link text-sm" href="/series/">All series</a>
+		</div>
+		{
+			allSeries.length ? (
+				<ul class="flex snap-x gap-3 overflow-x-auto pb-3" role="list">
+					{allSeries.map(([series, count]) => (
+						<li class="min-w-60 snap-start">
+							<a
+								class="border-muted/30 hover:border-accent block h-full rounded-md border p-4 transition-colors"
+								href={`/series/${slugifyValue(series)}/`}
+							>
+								<span class="title block text-lg">{series}</span>
+								<span class="text-muted mt-4 block">
+									{count} post{count === 1 ? "" : "s"}
+								</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			) : (
+				<p class="text-muted">No series yet.</p>
+			)
+		}
 	</section>
 </PageLayout>

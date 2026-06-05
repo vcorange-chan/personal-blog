@@ -39,3 +39,64 @@ export function getUniqueTagsWithCount(posts: CollectionEntry<"posts">[]): [stri
 		),
 	].sort((a, b) => b[1] - a[1]);
 }
+
+export function getCategoryCounts(posts: CollectionEntry<"posts">[]): [string, number][] {
+	return [
+		...posts.reduce(
+			(acc, post) => acc.set(post.data.category, (acc.get(post.data.category) ?? 0) + 1),
+			new Map<string, number>(),
+		),
+	].sort((a, b) => a[0].localeCompare(b[0]));
+}
+
+export function getSubcategoryCounts(
+	posts: CollectionEntry<"posts">[],
+	category: string,
+): [string, number][] {
+	return [
+		...posts
+			.filter((post) => post.data.category === category && post.data.subcategory)
+			.reduce((acc, post) => {
+				const subcategory = post.data.subcategory as string;
+				return acc.set(subcategory, (acc.get(subcategory) ?? 0) + 1);
+			}, new Map<string, number>()),
+	].sort((a, b) => a[0].localeCompare(b[0]));
+}
+
+export function getSeriesCounts(posts: CollectionEntry<"posts">[]): [string, number][] {
+	return [
+		...posts
+			.filter((post) => post.data.series)
+			.reduce((acc, post) => {
+				const series = post.data.series as string;
+				return acc.set(series, (acc.get(series) ?? 0) + 1);
+			}, new Map<string, number>()),
+	].sort((a, b) => a[0].localeCompare(b[0]));
+}
+
+export function getLanguageCounts(posts: CollectionEntry<"posts">[]): [string, number][] {
+	return [
+		...posts.reduce(
+			(acc, post) => acc.set(post.data.lang, (acc.get(post.data.lang) ?? 0) + 1),
+			new Map<string, number>(),
+		),
+	].sort((a, b) => a[0].localeCompare(b[0]));
+}
+
+export function slugifyValue(value: string) {
+	return value
+		.trim()
+		.toLowerCase()
+		.replace(/&/g, " and ")
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-+|-+$/g, "");
+}
+
+export function sortSeriesPosts(posts: CollectionEntry<"posts">[]) {
+	return posts.sort((a, b) => {
+		const orderA = a.data.seriesOrder ?? Number.MAX_SAFE_INTEGER;
+		const orderB = b.data.seriesOrder ?? Number.MAX_SAFE_INTEGER;
+		if (orderA !== orderB) return orderA - orderB;
+		return a.data.date.getTime() - b.data.date.getTime();
+	});
+}

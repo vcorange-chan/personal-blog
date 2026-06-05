@@ -11,6 +11,7 @@ const {
 	content: { data },
 	readingTime,
 } = Astro.props;
+const tags = data.tags ?? [];
 
 const dateTimeOptions: Intl.DateTimeFormatOptions = {
 	month: "long",
@@ -36,7 +37,7 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 	}
 </div>
 {
-	!!data.tags?.length && (
+	!!tags.length && (
 		<div class="mt-2">
 			<svg
 				aria-hidden="true"
@@ -55,12 +56,12 @@ const dateTimeOptions: Intl.DateTimeFormatOptions = {
 				<path d="M17.573 18.407l2.834 -2.834a2.025 2.025 0 0 0 0 -2.864l-7.117 -7.116" />
 				<path d="M6 9h-.01" />
 			</svg>
-			{data.tags.map((tag, i) => (
+			{tags.map((tag, i) => (
 				<>
 					{/* prettier-ignore */}
 					<span class="contents">
 						<a class="cactus-link inline-block before:content-['#']" href={`/tags/${tag}/`}><span class="sr-only">View more blogs with the tag&nbsp;</span>{tag}
-						</a>{i < data.tags.length - 1 && ", "}
+						</a>{i < tags.length - 1 && ", "}
 					</span>
 				</>
 			))}

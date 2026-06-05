@@ -44,6 +44,26 @@ export const menuLinks: { path: string; title: string }[] = [
 		path: "/posts/",
 		title: "Posts",
 	},
+	{
+		path: "/series/",
+		title: "Series",
+	},
+	{
+		path: "/math/",
+		title: "Math",
+	},
+	{
+		path: "/tech/",
+		title: "Tech",
+	},
+	{
+		path: "/lang/",
+		title: "Lang",
+	},
+	{
+		path: "/academia/",
+		title: "Academia",
+	},
 ];
 
 // https://expressive-code.com/reference/configuration/

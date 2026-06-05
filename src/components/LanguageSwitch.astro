@@ -1,0 +1,29 @@
+---
+import { getAllPosts, getLanguageCounts } from "@/data/post";
+
+const languageLabels: Record<string, string> = {
+	en: "EN",
+	fr: "FR",
+	ko: "KO",
+	zh: "中文",
+};
+
+const allPosts = await getAllPosts();
+const languages = getLanguageCounts(allPosts);
+---
+
+{
+	!!languages.length && (
+		<nav aria-label="Content language" class="ms-auto flex items-center gap-1 sm:ms-4">
+			{languages.map(([lang]) => (
+				<a
+					aria-label={`View ${languageLabels[lang] ?? lang} posts`}
+					class="hover:text-accent inline-flex h-8 min-w-8 items-center justify-center px-1 text-xs font-semibold"
+					href={`/languages/${lang}/`}
+				>
+					{languageLabels[lang] ?? lang.toUpperCase()}
+				</a>
+			))}
+		</nav>
+	)
+}
