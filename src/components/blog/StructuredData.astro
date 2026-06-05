@@ -1,0 +1,111 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { siteConfig } from "@/site.config";
+
+interface Props {
+	post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+const siteURL = Astro.site ?? new URL(siteConfig.url);
+const canonicalURL = new URL(Astro.url.pathname, siteURL).href;
+const imageURL = new URL(`/og-image/${post.id}.png`, siteURL).href;
+const postURL = new URL(`/posts/${post.id}/`, siteURL).href;
+const categoryURL = new URL(`/${post.data.category}/`, siteURL).href;
+const subcategoryURL = post.data.subcategory
+	? new URL(`/${post.data.category}/${post.data.subcategory}/`, siteURL).href
+	: undefined;
+
+const label = (value: string) =>
+	value
+		.split(/[-_]/)
+		.filter(Boolean)
+		.map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
+		.join(" ");
+
+const breadcrumbs = [
+	{
+		"@type": "ListItem",
+		item: new URL("/", siteURL).href,
+		name: "Home",
+		position: 1,
+	},
+	{
+		"@type": "ListItem",
+		item: categoryURL,
+		name: label(post.data.category),
+		position: 2,
+	},
+	...(post.data.subcategory && subcategoryURL
+		? [
+				{
+					"@type": "ListItem",
+					item: subcategoryURL,
+					name: label(post.data.subcategory),
+					position: 3,
+				},
+			]
+		: []),
+	{
+		"@type": "ListItem",
+		item: postURL,
+		name: post.data.title,
+		position: post.data.subcategory ? 4 : 3,
+	},
+];
+
+const structuredData = {
+	"@context": "https://schema.org",
+	"@graph": [
+		{
+			"@id": `${new URL("/#person", siteURL).href}`,
+			"@type": "Person",
+			name: siteConfig.author,
+			url: new URL("/", siteURL).href,
+		},
+		{
+			"@id": `${new URL("/#blog", siteURL).href}`,
+			"@type": "Blog",
+			description: siteConfig.description,
+			inLanguage: siteConfig.lang,
+			name: `${siteConfig.title} Blog`,
+			publisher: {
+				"@id": `${new URL("/#person", siteURL).href}`,
+			},
+			url: new URL("/", siteURL).href,
+		},
+		{
+			"@id": `${canonicalURL}#breadcrumb`,
+			"@type": "BreadcrumbList",
+			itemListElement: breadcrumbs,
+		},
+		{
+			"@id": `${canonicalURL}#article`,
+			"@type": "BlogPosting",
+			articleSection: [post.data.category, post.data.subcategory].filter(Boolean),
+			author: {
+				"@id": `${new URL("/#person", siteURL).href}`,
+			},
+			dateModified: (post.data.updatedDate ?? post.data.date).toISOString(),
+			datePublished: post.data.date.toISOString(),
+			description: post.data.description ?? post.data.title,
+			headline: post.data.title,
+			image: imageURL,
+			inLanguage: post.data.lang,
+			isPartOf: {
+				"@id": `${new URL("/#blog", siteURL).href}`,
+			},
+			keywords: post.data.tags ?? [],
+			mainEntityOfPage: {
+				"@id": canonicalURL,
+				"@type": "WebPage",
+			},
+			url: canonicalURL,
+		},
+	],
+};
+
+const json = JSON.stringify(structuredData).replace(/</g, "\\u003c");
+---
+
+<script is:inline type="application/ld+json" set:html={json} />

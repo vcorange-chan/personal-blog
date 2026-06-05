@@ -3,6 +3,8 @@ import { existsSync, rmSync } from "node:fs";
 
 const archive = "blog-dist.tar";
 const remoteArchive = "~/blog-dist.tar";
+const cspScript = "scripts/apply-caddy-csp-report-only.py";
+const remoteCspScript = "/tmp/apply-caddy-csp-report-only.py";
 const webHost = process.env.BLOG_WEB_HOST ?? "web-vps";
 const sydneyHost = process.env.BLOG_SYDNEY_HOST ?? "vps";
 const webRoot = process.env.BLOG_WEB_ROOT ?? "/var/www/cliffordchen.org";
@@ -57,8 +59,38 @@ function deployCommand(root, verifyUrl) {
 		`sudo find ${shellQuote(root)} -mindepth 1 -maxdepth 1 -exec rm -rf {} +`,
 		`sudo tar -xf ${remoteArchive} -C ${shellQuote(root)}`,
 		`sudo chown -R caddy:caddy ${shellQuote(root)}`,
+		`sudo python3 ${shellQuote(remoteCspScript)}`,
+		"sudo caddy fmt --overwrite /etc/caddy/Caddyfile",
+		"sudo caddy validate --config /etc/caddy/Caddyfile",
+		"sudo systemctl reload caddy",
 		`curl -fsSI ${shellQuote(verifyUrl)} >/dev/null`,
+		`curl -fsSI ${shellQuote(verifyUrl)} | grep -i '^content-security-policy-report-only:' >/dev/null`,
 	].join("; ");
+}
+
+function verifyCommand(urls) {
+	return urls.map((url) => `curl -fsSI ${shellQuote(url)} >/dev/null`).join("; ");
+}
+
+function deployTarget({ host, name, root, verifyUrl, extraVerifyUrls = [] }) {
+	const sudoCheck = runCapture("ssh", [host, "sudo -n caddy version >/dev/null"]);
+	if (!sudoCheck.ok) {
+		throw new Error(
+			[
+				`${name} (${host}) cannot run passwordless sudo.`,
+				"Run this on the VPS first:",
+				"sudo visudo -f /etc/sudoers.d/clifford-blog-deploy",
+			].join("\n"),
+		);
+	}
+
+	run("scp", [archive, `${host}:${remoteArchive}`]);
+	run("scp", [cspScript, `${host}:${remoteCspScript}`]);
+	run("ssh", [host, deployCommand(root, verifyUrl)]);
+	if (extraVerifyUrls.length) {
+		run("ssh", [host, verifyCommand(extraVerifyUrls)]);
+	}
+	console.log(`${name} deployment was updated and verified.`);
 }
 
 try {
@@ -67,30 +99,32 @@ try {
 	run("npm", ["run", "build"]);
 	run("tar", ["-cf", archive, "-C", "dist", "."]);
 
-	run("scp", [archive, `${webHost}:${remoteArchive}`]);
-	run("ssh", [webHost, deployCommand(webRoot, "https://blog.cliffordchen.org/")]);
-	run("ssh", [
-		webHost,
-		"curl -fsSI https://blog.cliffordchen.org/posts/lang/french/lecon-1-interactive/ >/dev/null",
-	]);
+	deployTarget({
+		extraVerifyUrls: [
+			"https://blog.cliffordchen.org/404.html",
+			"https://blog.cliffordchen.org/rss.xml",
+			"https://blog.cliffordchen.org/posts/lang/french/lecon-1-interactive/",
+		],
+		host: webHost,
+		name: "Seoul blog",
+		root: webRoot,
+		verifyUrl: "https://blog.cliffordchen.org/",
+	});
 
-	run("scp", [archive, `${sydneyHost}:${remoteArchive}`]);
-
-	const sudoCheck = runCapture("ssh", [sydneyHost, "sudo -n true"]);
-	if (sudoCheck.ok) {
-		run("ssh", [sydneyHost, deployCommand(sydneyRoot, "https://cliffordchen.org/")]);
-	} else {
-		console.log("\nSydney VPS requires an interactive sudo password.");
-		console.log("The build archive has been uploaded to:");
-		console.log(`  ${sydneyHost}:${remoteArchive}`);
-		console.log("\nRun this manually on the Sydney VPS:");
-		console.log("\nssh vps");
-		console.log(deployCommand(sydneyRoot, "https://cliffordchen.org/"));
-	}
+	deployTarget({
+		extraVerifyUrls: [
+			"https://cliffordchen.org/404.html",
+			"https://cliffordchen.org/rss.xml",
+			"https://cliffordchen.org/posts/lang/french/lecon-1-interactive/",
+		],
+		host: sydneyHost,
+		name: "Sydney main site",
+		root: sydneyRoot,
+		verifyUrl: "https://cliffordchen.org/",
+	});
 
 	console.log("\nDeployment script finished.");
-	console.log("Seoul blog deployment was updated and verified.");
-	console.log("Sydney deployment is automatic only when passwordless sudo is available.");
+	console.log("Seoul and Sydney deployments were updated and verified.");
 } finally {
 	if (existsSync(archive)) rmSync(archive);
 }

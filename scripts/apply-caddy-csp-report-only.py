@@ -25,6 +25,8 @@ def add_report_only_to_static_site_blocks(text: str) -> str:
     current_site = ""
     in_header_block = False
     header_indent = ""
+    header_target_site = False
+    header_has_report_only = False
     static_sites = {"http://141.164.39.98", "blog.cliffordchen.org", "cliffordchen.org, www.cliffordchen.org"}
 
     for line in lines:
@@ -35,16 +37,24 @@ def add_report_only_to_static_site_blocks(text: str) -> str:
         if stripped == "header {":
             in_header_block = True
             header_indent = line[: len(line) - len(line.lstrip())]
+            header_target_site = current_site in static_sites
+            header_has_report_only = False
+
+        if in_header_block and header_target_site and stripped.startswith("Content-Security-Policy-Report-Only"):
+            if header_has_report_only:
+                continue
+            header_has_report_only = True
 
         result.append(line)
 
-        if in_header_block and stripped == marker and current_site in static_sites:
-            existing_block = "\n".join(result[-8:])
-            if "Content-Security-Policy-Report-Only" not in existing_block:
-                result.append(f"{header_indent}\t{CSP_REPORT_ONLY}")
+        if in_header_block and header_target_site and stripped == marker and not header_has_report_only:
+            result.append(f"{header_indent}\t{CSP_REPORT_ONLY}")
+            header_has_report_only = True
 
         if in_header_block and stripped == "}":
             in_header_block = False
+            header_target_site = False
+            header_has_report_only = False
 
     return "\n".join(result) + "\n"
 
