@@ -10,6 +10,7 @@ const PORT = Number(process.env.PORT ?? 8787);
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 const ELEVENLABS_MODEL = process.env.ELEVENLABS_MODEL ?? "eleven_multilingual_v2";
 const DEFAULT_VOICE_ID = process.env.ELEVENLABS_DEFAULT_VOICE_ID;
+const ENGLISH_VOICE_ID = process.env.ELEVENLABS_ENGLISH_VOICE_ID ?? DEFAULT_VOICE_ID;
 const FRENCH_VOICE_ID = process.env.ELEVENLABS_FRENCH_VOICE_ID ?? DEFAULT_VOICE_ID;
 const KOREAN_VOICE_ID = process.env.ELEVENLABS_KOREAN_VOICE_ID ?? DEFAULT_VOICE_ID;
 const MAX_TEXT_LENGTH = Number(process.env.MAX_TEXT_LENGTH ?? 500);
@@ -111,6 +112,7 @@ function normalizeVoice(value) {
 }
 
 function getVoiceId(voice) {
+	if (voice === "english" || voice === "en") return ENGLISH_VOICE_ID;
 	if (voice === "french" || voice === "fr") return FRENCH_VOICE_ID;
 	if (voice === "korean" || voice === "ko") return KOREAN_VOICE_ID;
 	return DEFAULT_VOICE_ID;

@@ -128,7 +128,10 @@ sudo chmod 640 /etc/tts-proxy.env
 HOST=127.0.0.1
 PORT=8787
 ELEVENLABS_API_KEY=<真实 key>
+ELEVENLABS_DEFAULT_VOICE_ID=<真实 default voice id>
+ELEVENLABS_ENGLISH_VOICE_ID=<真实 english voice id>
 ELEVENLABS_FRENCH_VOICE_ID=<真实 voice id>
+ELEVENLABS_KOREAN_VOICE_ID=<真实 korean voice id>
 ALLOWED_ORIGINS=https://cliffordchen.org
 MAX_TEXT_LENGTH=500
 CACHE_DIR=/var/cache/tts-proxy/audio
@@ -307,4 +310,3 @@ active
 5. 我追加 Caddy site block，执行 `caddy validate`，再 `systemctl reload caddy`。
 6. 验证 `/health` 和 `/speak`。
 7. 验证 VPN 服务仍为 active。
-

@@ -29,6 +29,7 @@ HOST=127.0.0.1
 PORT=8787
 ELEVENLABS_API_KEY=...
 ELEVENLABS_DEFAULT_VOICE_ID=...
+ELEVENLABS_ENGLISH_VOICE_ID=...
 ELEVENLABS_FRENCH_VOICE_ID=...
 ELEVENLABS_KOREAN_VOICE_ID=...
 ALLOWED_ORIGINS=https://cliffordchen.org
@@ -41,6 +42,8 @@ Do not commit `.env`.
 Voice mapping:
 
 ```json
+{ "voice": "english" }
+{ "voice": "en" }
 { "voice": "french" }
 { "voice": "fr" }
 { "voice": "korean" }
