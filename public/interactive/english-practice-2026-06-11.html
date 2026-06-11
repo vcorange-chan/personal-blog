@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Practice</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f9f7f4;
+    --surface: #ffffff;
+    --border: #e8e4de;
+    --border-strong: #d0cbc3;
+    --text: #1a1714;
+    --text-muted: #6b6560;
+    --text-faint: #a09990;
+    --accent: #5b4fcf;
+    --accent-bg: #eeedfe;
+    --accent-text: #3c3489;
+    --teal-bg: #e1f5ee;
+    --teal-text: #085041;
+    --amber-bg: #faeeda;
+    --amber-text: #633806;
+    --blue-bg: #e6f1fb;
+    --blue-text: #0c447c;
+    --green-bg: #eaf3de;
+    --green-text: #27500a;
+    --font: 'Georgia', 'Noto Serif SC', serif;
+    --font-ui: system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-ui);
+    line-height: 1.6;
+    padding: 2rem 1rem 4rem;
+    min-height: 100vh;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .page-header h1 {
+    font-family: var(--font);
+    font-size: 1.75rem;
+    font-weight: normal;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.4rem;
+  }
+
+  .page-header p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .section {
+    max-width: 680px;
+    margin: 0 auto 3rem;
+  }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 1rem;
+    padding-left: 2px;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+
+  .tab {
+    font-size: 0.75rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: var(--font-ui);
+  }
+
+  .tab:hover { background: var(--bg); }
+
+  .tab.active {
+    background: var(--accent-bg);
+    border-color: var(--accent);
+    color: var(--accent-text);
+  }
+
+  /* ── PROGRESS ── */
+  .prog-wrap {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+  }
+
+  .prog-fill {
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 1.5rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .card-num {
+    font-size: 0.75rem;
+    color: var(--text-faint);
+    font-family: var(--font-ui);
+  }
+
+  .badge {
+    font-size: 0.7rem;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-family: var(--font-ui);
+  }
+
+  .badge-haircut  { background: var(--amber-bg);  color: var(--amber-text); }
+  .badge-accent   { background: var(--accent-bg); color: var(--accent-text); }
+  .badge-deepseek { background: var(--teal-bg);   color: var(--teal-text); }
+  .badge-chatgpt  { background: var(--blue-bg);   color: var(--blue-text); }
+  .badge-general  { background: var(--blue-bg);   color: var(--blue-text); }
+  .badge-ai       { background: var(--teal-bg);   color: var(--teal-text); }
+
+  /* ── FLASHCARD FLIP ── */
+  .flip-scene {
+    perspective: 1000px;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .flip-inner {
+    position: relative;
+    width: 100%;
+    min-height: 160px;
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease;
+    cursor: pointer;
+  }
+
+  .flip-inner.flipped { transform: rotateY(180deg); }
+
+  .flip-face {
+    position: absolute;
+    width: 100%;
+    min-height: 160px;
+    backface-visibility: hidden;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .flip-back { transform: rotateY(180deg); }
+
+  .flip-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 0.75rem;
+  }
+
+  .flip-en {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+    line-height: 1.4;
+  }
+
+  .flip-zh {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .flip-hint {
+    font-size: 0.7rem;
+    color: var(--text-faint);
+    margin-top: 1rem;
+  }
+
+  .flip-example {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+    width: 100%;
+    text-align: left;
+  }
+
+  /* ── ORAL PRACTICE ── */
+  .q-zh {
+    font-size: 1.0625rem;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .reveal-btn {
+    font-size: 0.8125rem;
+    padding: 7px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: var(--font-ui);
+    transition: all 0.15s;
+  }
+
+  .reveal-btn:hover { background: var(--bg); color: var(--text); }
+
+  .answer-wrap {
+    margin-top: 1rem;
+    border-left: 2px solid var(--accent);
+    padding-left: 1rem;
+  }
+
+  .answer-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .answer-en {
+    font-size: 0.9375rem;
+    color: var(--text);
+    line-height: 1.75;
+    margin-bottom: 0.75rem;
+    font-family: var(--font);
+  }
+
+  .answer-note {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+    padding: 0.75rem 1rem;
+    background: var(--bg);
+    border-radius: 6px;
+  }
+
+  .answer-note strong, .answer-note .kw {
+    color: var(--accent-text);
+    font-weight: 600;
+  }
+
+  /* ── NAV ── */
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .nav-btn {
+    font-size: 0.8125rem;
+    padding: 7px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    font-family: var(--font-ui);
+    transition: all 0.15s;
+  }
+
+  .nav-btn:hover { background: var(--bg); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .nav-info {
+    font-size: 0.8125rem;
+    color: var(--text-faint);
+  }
+
+  .shuffle-btn {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-faint);
+    cursor: pointer;
+    font-family: var(--font-ui);
+    transition: all 0.15s;
+  }
+
+  .shuffle-btn:hover { background: var(--bg); color: var(--text-muted); }
+
+  .divider {
+    max-width: 680px;
+    margin: 0 auto 3rem;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 1.25rem 0.75rem 3rem; }
+    .flip-en { font-size: 1rem; }
+    .q-zh { font-size: 0.9375rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>English Practice</h1>
+  <p>单词短语 · 口语翻译练习</p>
+</header>
+
+<!-- ══════════════ SECTION 1: FLASHCARDS ══════════════ -->
+<section class="section" id="fc-section">
+  <div class="section-label">单词 &amp; 短语</div>
+
+  <div class="tabs" id="fc-tabs">
+    <button type="button" class="tab active" data-filter="all">全部</button>
+    <button type="button" class="tab" data-filter="ai">AI &amp; tech</button>
+    <button type="button" class="tab" data-filter="accent">口音</button>
+    <button type="button" class="tab" data-filter="haircut">理发</button>
+    <button type="button" class="tab" data-filter="general">通用表达</button>
+  </div>
+
+  <div class="prog-wrap"><div class="prog-fill" id="fc-prog"></div></div>
+
+  <div class="card">
+    <div class="card-meta">
+      <span class="card-num" id="fc-num"></span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button type="button" class="shuffle-btn" id="fc-shuffle">↺ 随机</button>
+        <span class="badge" id="fc-badge"></span>
+      </div>
+    </div>
+    <div class="flip-scene">
+      <div class="flip-inner" id="fc-card">
+        <div class="flip-face flip-front">
+          <div class="flip-label">点击翻面看例句</div>
+          <div class="flip-en" id="fc-front-en"></div>
+          <div class="flip-zh" id="fc-front-zh"></div>
+          <div class="flip-hint">tap to flip</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="flip-label">例句</div>
+          <div class="flip-example" id="fc-back-ex"></div>
+          <div class="flip-hint">tap to flip back</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="nav-btn" id="fc-prev">← 上一个</button>
+    <span class="nav-info" id="fc-counter"></span>
+    <button type="button" class="nav-btn" id="fc-next">下一个 →</button>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════ SECTION 2: ORAL PRACTICE ══════════════ -->
+<section class="section" id="op-section">
+  <div class="section-label">口语翻译练习</div>
+
+  <div class="tabs" id="op-tabs">
+    <button type="button" class="tab active" data-filter="all">全部</button>
+    <button type="button" class="tab" data-filter="haircut">理发</button>
+    <button type="button" class="tab" data-filter="accent">口音</button>
+    <button type="button" class="tab" data-filter="deepseek">DeepSeek</button>
+    <button type="button" class="tab" data-filter="chatgpt">ChatGPT / Claude</button>
+  </div>
+
+  <div class="prog-wrap"><div class="prog-fill" id="op-prog"></div></div>
+
+  <div class="card">
+    <div class="card-meta">
+      <span class="card-num" id="op-num"></span>
+      <span class="badge" id="op-badge"></span>
+    </div>
+    <div class="q-zh" id="op-zh"></div>
+    <button type="button" class="reveal-btn" id="op-reveal-btn">显示答案</button>
+    <div id="op-answer" style="display:none;">
+      <div class="answer-wrap">
+        <div class="answer-label">参考答案</div>
+        <div class="answer-en" id="op-en"></div>
+        <div class="answer-note" id="op-note"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button type="button" class="nav-btn" id="op-prev">← 上一题</button>
+    <span class="nav-info" id="op-counter"></span>
+    <button type="button" class="nav-btn" id="op-next">下一题 →</button>
+  </div>
+</section>
+
+<script>
+/* ══════════ FLASHCARD DATA ══════════ */
+const FC_ALL = [
+  {cat:'ai', en:'stumble into it', zh:'偶然发现／无心插柳', ex:'"I stumbled into using Claude — saw a post on X and just gave it a try."'},
+  {cat:'ai', en:'beta version', zh:'内测版本', ex:'"It\'s not public yet — it\'s still in beta, just for internal testing."'},
+  {cat:'ai', en:'run out of tokens', zh:'用完了token额度', ex:'"Claude is great but I keep running out of tokens — it gets expensive."'},
+  {cat:'ai', en:'hit what I need precisely', zh:'准确命中需求', ex:'"Codex tends to hit what I need more precisely with fewer mistakes."'},
+  {cat:'ai', en:'repetitive tasks', zh:'重复性工作', ex:'"AI frees me up from repetitive tasks so I can focus on the logic."'},
+  {cat:'ai', en:'multimodal', zh:'多模态（能处理图片、音频等）', ex:'"DeepSeek isn\'t fully multimodal yet — it only just started supporting images."'},
+  {cat:'ai', en:'quantitative hedge fund', zh:'量化对冲基金', ex:'"DeepSeek was built by a small team from a quantitative hedge fund, not an AI company."'},
+  {cat:'ai', en:'catch the industry off guard', zh:'让业界措手不及', ex:'"Their performance caught basically everyone in the industry off guard."'},
+  {cat:'ai', en:'fall short on complex tasks', zh:'复杂任务上表现不足', ex:'"It starts to fall short when the task gets more complex, like debugging."'},
+  {cat:'ai', en:'treat it as a toy', zh:'把它当玩具（不认真对待）', ex:'"At first I just treated it as a toy — something to chat with when I was bored."'},
+  {cat:'ai', en:'come up', zh:'（事情）出现，冒出来', ex:'"I was browsing X and following some tech accounts, and ChatGPT just came up."'},
+  {cat:'ai', en:'come across', zh:'偶然看到，碰到', ex:'"I came across a post where someone tested ChatGPT and Claude on the same novel."'},
+  {cat:'ai', en:'give it a try', zh:'试一试', ex:'"So I gave Claude a try and found it much more natural to interact with."'},
+  {cat:'ai', en:'collaborate with', zh:'与……协作配合', ex:'"It feels more like a real conversation — it\'s just easier to collaborate with."'},
+  {cat:'ai', en:'the one downside', zh:'唯一的缺点', ex:'"The one downside with Claude is the tokens run out fast."'},
+  {cat:'ai', en:'slip up on', zh:'在某方面出错（本来能做好，一时失手）', ex:'"Claude is great for reasoning, but it does slip up on code sometimes."'},
+  {cat:'ai', en:'hunting down bugs', zh:'追查bug，排查问题', ex:'"For hunting down bugs or security vulnerabilities, DeepSeek isn\'t reliable enough."'},
+  {cat:'ai', en:'one of the first wave', zh:'第一批用户之一', ex:'"I think I was one of the first wave of ChatGPT users — this was back in 2022."'},
+  {cat:'accent', en:'distinct accent', zh:'鲜明的口音（辨识度高）', ex:'"Northeast China has a pretty distinct accent — you can tell immediately where someone\'s from."'},
+  {cat:'accent', en:'no point of reference', zh:'没有参照物', ex:'"Everyone around me sounded the same, so I had no point of reference to know I was wrong."'},
+  {cat:'accent', en:'stress the wrong syllable', zh:'重音放错了', ex:'"I was stressing the wrong syllable in \'practice\' for years without realizing it."'},
+  {cat:'accent', en:'it hit me', zh:'我突然意识到', ex:'"It hit me in university — my pronunciation sounded completely different from everyone else\'s."'},
+  {cat:'accent', en:'pick up an accent', zh:'沾染口音', ex:'"By graduation, all my roommates had picked up my accent without even realizing it."'},
+  {cat:'accent', en:'contagious', zh:'有传染性的', ex:'"My accent turned out to be really contagious — I infected the whole dorm."'},
+  {cat:'accent', en:'exposed to', zh:'接触到，暴露于', ex:'"I was exposed to students from all over China and realized how different my accent was."'},
+  {cat:'accent', en:'struggle with', zh:'在某方面吃力，应付不来', ex:'"Back then ChatGPT was pretty good at technical topics but struggled with anything cultural."'},
+  {cat:'accent', en:'surrounded by', zh:'被……包围（环境、氛围均可用）', ex:'"I grew up completely surrounded by that accent — so I had no idea anything was off."'},
+  {cat:'accent', en:'genuinely', zh:'真的、确实（强调发自内心，非假装）', ex:'"I genuinely had no idea my pronunciation was wrong for years."'},
+  {cat:'accent', en:'something feels off', zh:'感觉哪里不对劲', ex:'"Something felt off about his pronunciation, but I couldn\'t pinpoint what."'},
+  {cat:'accent', en:'turn out to be', zh:'结果是……，最终发现是……（带意外语气）', ex:'"My accent turned out to be really contagious — I didn\'t expect that at all."'},
+  {cat:'haircut', en:'stressed out', zh:'压力很大，很烦躁', ex:'"I was stressed out and just needed a break, so I went to get a haircut."'},
+  {cat:'haircut', en:'need a break', zh:'需要喘口气，换换心情', ex:'"I wasn\'t stressed for any particular reason — I just needed a break."'},
+  {cat:'haircut', en:'fed up', zh:'烦透了，受够了', ex:'"I was just fed up with everything that week, so I went and got a haircut."'},
+  {cat:'haircut', en:'go and get a haircut', zh:'去理个发（说做就做的语气）', ex:'"One day I was stressed out, so I just went and got a haircut."'},
+  {cat:'haircut', en:"didn't turn out the way I wanted", zh:'没变成我想要的样子', ex:'"The haircut didn\'t turn out the way I wanted at all — the sides were way too short."'},
+  {cat:'haircut', en:'way too short', zh:'剪得太短了（way = 大幅度加强语气）', ex:'"She cut the sides way too short — it looked really harsh."'},
+  {cat:'haircut', en:'even it out', zh:'把整体弄均匀', ex:'"I told her to cut the top shorter too, just to even it out."'},
+  {cat:'haircut', en:'end up with', zh:'最终落得，结果变成（常带无奈）', ex:'"I ended up with the same haircut I had back in middle school."'},
+  {cat:'haircut', en:'fade', zh:'两侧渐短的发型', ex:'"The sides were cut so short it looked like a bad fade."'},
+  {cat:'haircut', en:'harsh', zh:'（发型）太生硬，不协调', ex:'"The contrast between the sides and the top looked really harsh."'},
+  {cat:'haircut', en:'back in (middle school)', zh:'回到……那时候（回忆过去的语气）', ex:'"It\'s the same style I had back in middle school."'},
+  {cat:'haircut', en:'sort it out', zh:'把乱的东西理顺、整理好', ex:'"Every morning my hair is a mess — I have to sort it out before anything else."'},
+  {cat:'haircut', en:'brush / comb', zh:'发刷／梳子；brush = 刷，comb = 细齿梳', ex:'"I brush my hair every morning — takes about two minutes."'},
+  {cat:'general', en:'by a strange twist of fate', zh:'阴差阳错', ex:'"By a strange twist of fate, I ended up studying in Australia."'},
+  {cat:'general', en:'happy accident', zh:'歪打正着，意外的好结果', ex:'"Moving into that major was a happy accident — it turned out to be perfect for me."'},
+  {cat:'general', en:'recognizable', zh:'有辨识度的，一听／一看就知道', ex:'"She has a very recognizable accent — you know exactly where she\'s from."'},
+  {cat:'general', en:'in retrospect', zh:'回想起来，事后看来', ex:'"In retrospect, I find the whole thing quite funny."'},
+  {cat:'general', en:'hard work pays off', zh:'努力终有回报', ex:'"Your pronunciation sounds great now — hard work always pays off."'},
+  {cat:'general', en:'not what I had in mind', zh:'不是我心里预想的样子', ex:'"The result wasn\'t what I had in mind at all."'},
+  {cat:'general', en:'mess up', zh:'搞砸了（比slip up程度更重）', ex:'"I really messed up that presentation — I was so nervous."'},
+];
+
+/* ══════════ ORAL PRACTICE DATA ══════════ */
+const OP_ALL = [
+  {cat:'haircut', zh:'每天早上起床，我头发都是乱的。',
+   en:'Every morning when I wake up, my hair is a mess.',
+   note:'让"头发"做主语：<strong>my hair is a mess</strong>，不说 "I have messy hair"。这是英语"让事物做主语"的典型习惯。'},
+  {cat:'haircut', zh:'我得先把头发整理好，用梳子梳一下。',
+   en:'I have to sort it out first — brush it through.',
+   note:'<strong>sort it out</strong> = 把乱的东西理顺；<strong>brush it through</strong> = 从头梳到尾、梳通。两个都是口语惯用法。'},
+  {cat:'haircut', zh:'那天我压力很大，需要喘口气，就去理了个发。',
+   en:'One day I was really stressed out and just needed a break, so I went and got a haircut.',
+   note:'<strong>stressed out</strong> 比 "stressed" 更口语；<strong>went and got</strong> 是"说做就做"的结构，带随性感。'},
+  {cat:'haircut', zh:'结果发型根本不是我想要的样子。',
+   en:"The haircut didn't turn out the way I wanted at all.",
+   note:'<strong>turn out the way I wanted</strong> = 变成我想要的样子，这是固定说法，整句背下来。不说 "not as what I imagined"——"not as what" 是中式英语，这个结构在英语里不存在。'},
+  {cat:'haircut', zh:'她把两侧剪得太短了，看起来很生硬，有点像精神小伙那种发型。',
+   en:"She cut the sides way too short — it looked really harsh, kind of like a bad fade.",
+   note:'<strong>way too short</strong>：way 在这里是副词，大幅加强语气；<strong>harsh</strong> 形容发型生硬突兀；<strong>fade</strong> = 两侧渐短发型。'},
+  {cat:'haircut', zh:'没办法，我让她把整体都剪短一些，这样均匀一点。',
+   en:"In the end I just told her to cut the whole thing shorter to even it out.",
+   note:'<strong>even it out</strong> = 把整体弄均匀；<strong>in the end</strong> 表示无奈之下的结果，比 "finally" 更口语自然。'},
+  {cat:'haircut', zh:'最后我顶着一个和我中学时一模一样的发型走出了理发店。',
+   en:'I ended up with the same haircut I had back in middle school.',
+   note:'<strong>end up with</strong> = 最终落得某种结果，常带无奈；<strong>back in</strong> 有回忆过去的语气，比直接说 "in middle school" 更自然。'},
+  {cat:'accent', zh:'我是东北人，东北话口音非常重，辨识度很高。',
+   en:"I'm from Northeast China, and the dialect there is pretty distinct — it's got a very heavy, recognizable accent.",
+   note:'<strong>distinct</strong> 比 "different" 更强调辨识度，不需要比较对象，直接说"这个方言自身特点鲜明"；<strong>it\'s got</strong> = it has，口语里更自然。'},
+  {cat:'accent', zh:'东北话总是把重音放在最后一个音节，英语恰恰相反。',
+   en:'The dialect tends to stress the last syllable of everything, which is basically the opposite of English.',
+   note:'<strong>stress the last syllable</strong> = 把重音放在最后一个音节；<strong>tends to</strong> 表示"总是倾向于这样"，比 "always" 更地道。'},
+  {cat:'accent', zh:'比如 practice 这个词，东北话重音在后，英语重音在前。',
+   en:"Take the word 'practice' — in the dialect we'd stress the last syllable, but in English the stress is on the first.",
+   note:'<strong>take the word X</strong> = 就拿X这个词来说，举例的地道说法，比 "for example" 更口语。'},
+  {cat:'accent', zh:'我从小到大的语言环境都是这样，根本不知道自己哪里错了。',
+   en:"The tricky thing is, I grew up completely surrounded by that accent, so I genuinely had no idea anything was off.",
+   note:'<strong>surrounded by</strong> = 被……包围，不只是物理包围，语言环境、文化氛围都可以用；<strong>genuinely</strong> = 真的，强调"不是借口，是真的不知道"；<strong>off</strong> 在这里是形容词，意思是"不对劲、哪里有问题"——凡是中文说"不对劲"，英语很多时候就是一个 off。'},
+  {cat:'accent', zh:'直到上大学，接触到来自全国各地的同学，我才意识到自己发音跟别人完全不一样。',
+   en:"It wasn't until I got to university and was exposed to students from all over the country that I realized my pronunciation sounded completely different.",
+   note:'<strong>it wasn\'t until… that…</strong> = 直到……才……，是强调"很晚才发生"的固定结构；<strong>exposed to</strong> = 接触到、暴露于（语言、文化、观点等）。'},
+  {cat:'accent', zh:'那一刻我才明白，原来我一直说的是方言，我以为我说的是标准的。',
+   en:"That's when it hit me — I'd been speaking a dialect my whole life and thought it was standard.",
+   note:'<strong>that\'s when it hit me</strong> = 就在那时我才突然意识到；<strong>hit</strong> 在这里不是"打"，是"突然意识到"的意思。比 "I realized" 更生动有力。'},
+  {cat:'accent', zh:'更有意思的是，我的口音传染性很强。',
+   en:'The funny thing is, my accent turned out to be really contagious.',
+   note:'<strong>the funny thing is</strong> = 有意思的是，引出出乎意料的事；<strong>turn out to be</strong> = 结果发现是……，带意外语气——凡是中文说"原来……""没想到……结果……"，英语很多时候就是 turned out to be；<strong>contagious</strong> = 有传染性的。'},
+  {cat:'accent', zh:'大学四年，室友们虽然都不是东北人，但说话几乎都跟我一样了，我传染了所有人。',
+   en:"By the end of four years, basically all my roommates were talking like me — none of them were from Northeast China, but they'd all picked up my accent. I'd infected everyone.",
+   note:'<strong>pick up an accent</strong> = 沾染口音，无意间学到；<strong>infected everyone</strong> 是幽默说法，很口语，把"传染口音"比作传播病毒。'},
+  {cat:'deepseek', zh:'DeepSeek 相比 Claude 便宜很多，token 价格大概只有五分之一。',
+   en:"DeepSeek is pretty cheap compared to Claude — the token cost is roughly one fifth.",
+   note:'<strong>compared to</strong> = 相比，放在句中或句尾均可；<strong>roughly</strong> = 大约，比 "about" 稍正式，口语也常用。'},
+  {cat:'deepseek', zh:'日常简单的任务，比如对话、摘要、提醒，它完全够用。',
+   en:'For everyday stuff like simple conversations, summaries, and reminders, it handles all that fine — more than good enough.',
+   note:'<strong>handles all that fine</strong> = 应付这些完全没问题；<strong>more than good enough</strong> 是加强语气的口语说法，比 "very good" 更自然。'},
+  {cat:'deepseek', zh:'但复杂的任务，比如写代码、找 bug、排查安全漏洞，它就不太行了，经常出错。',
+   en:'But for more complex tasks — like writing code, hunting down bugs, or finding security vulnerabilities — it starts to fall short. It makes mistakes more often.',
+   note:'<strong>hunting down bugs</strong> = 追查、排查bug，hunting down 有"追踪、深挖"的感觉；<strong>fall short</strong> = 不够用，表现不足，没达到预期水平。'},
+  {cat:'deepseek', zh:'它也不是多模态模型，没法识别图片，而 Claude 和 ChatGPT 在这方面能做的多得多。',
+   en:"There's also the fact that it's not really multimodal — it can't handle images. Claude and ChatGPT are a lot more capable on that front.",
+   note:'<strong>there\'s also the fact that</strong> = 还有一点是，引出补充信息；<strong>on that front</strong> = 在这方面，比 "in this aspect" 更口语。'},
+  {cat:'deepseek', zh:'据我所知，DeepSeek 其实是一个量化基金的小团队做的，他们最开始研究 AI 是为了做量化投资。',
+   en:"From what I know, DeepSeek was actually built by a small team from a quantitative hedge fund — they originally got into AI to help with quantitative investing.",
+   note:'<strong>from what I know</strong> = 据我所知，比 "as far as I know" 更口语随意；<strong>got into AI</strong> = 开始研究/涉足AI，got into 表示"进入某个领域"。'},
+  {cat:'deepseek', zh:'他们能做到这个程度，几乎让整个行业都措手不及。',
+   en:'The fact that they pulled it off at that level caught basically everyone in the industry off guard.',
+   note:'<strong>pull it off</strong> = 成功做到了（尤其是困难的事）；<strong>catch someone off guard</strong> = 让人措手不及，出乎意料。'},
+  {cat:'chatgpt', zh:'我觉得我算是第一批 ChatGPT 用户，2022 年就知道了。',
+   en:"I think I was actually one of the first wave of ChatGPT users — I found out about it back in 2022.",
+   note:'<strong>one of the first wave</strong> = 第一批，wave 有"浪潮"的意象，比 "batch" 更口语；<strong>found out about it</strong> 比 "knew it" 更自然——know 是状态，find out 是发现的动作。'},
+  {cat:'chatgpt', zh:'最开始我只把它当玩具，闲着没事聊聊天。',
+   en:"At first I just treated it as a toy — something to chat with when I was bored.",
+   note:'<strong>treat it as a toy</strong> = 把它当玩具，treat X as Y 是固定结构；后半句"something to chat with when I was bored"是补充说明，用不定式直接跟在名词后面，不需要新开一句——这是英语思维和中文思维的重要差别。'},
+  {cat:'chatgpt', zh:'我是偶然发现的，当时在刷 X，关注了一些技术账号，它就这么出现了。',
+   en:"I stumbled into it, really — I was browsing X, following some tech accounts, and it just came up.",
+   note:'<strong>stumbled into it</strong> = 偶然发现，无心插柳；<strong>came up</strong> = 出现了——注意主语是"它"，不是"我"。让事物做主语，是英语流畅表达的关键习惯。'},
+  {cat:'chatgpt', zh:'那时候 ChatGPT 擅长技术话题，但文化、文学、历史这类的，它就应付不来了。',
+   en:"Back then ChatGPT was pretty good at technical topics but struggled with anything cultural — literature, history, that kind of thing.",
+   note:'<strong>struggled with</strong> = 应付不来，比 "not good at" 更生动，带一种"费力应付、力不从心"的感觉；<strong>that kind of thing</strong> = 诸如此类，口语收尾很自然。'},
+  {cat:'chatgpt', zh:'后来我偶然看到一篇帖子，有人用同一本小说测试了两个 AI，Claude 明显更好。',
+   en:"Then I came across a post where someone tested both ChatGPT and Claude on a novel, and Claude handled it way better.",
+   note:'<strong>came across</strong> = 偶然看到，比 encounter 更口语；<strong>handled it way better</strong> = 处理得好得多，way 在这里大幅加强比较语气。'},
+  {cat:'chatgpt', zh:'于是我就试了试 Claude，发现交流起来自然多了，更像真正的对话，也更容易配合。',
+   en:"So I gave Claude a try, and I found it much more natural to interact with — it feels more like a real conversation, and it's easier to collaborate with.",
+   note:'<strong>gave it a try</strong> = 试了试，比 "tried it" 更口语；注意"natural to interact with"——让 Claude 做被描述的对象，而不是"我觉得跟它交流很自然"，这是英语惯用的表达角度。'},
+  {cat:'chatgpt', zh:'还有一个实际问题——Claude Code 支持 Windows，但 ChatGPT 的编程工具那时只能在 Mac 和 Linux 上用。',
+   en:"There was also a practical issue — Claude Code worked on Windows, but ChatGPT's coding tools were only available on Mac and Linux at the time.",
+   note:'<strong>there was also a practical issue</strong> = 还有一个实际问题，用 there was 引出新信息，比 "also, another problem was" 更简洁；<strong>only available on</strong> = 只能在……上使用。'},
+  {cat:'chatgpt', zh:'Claude 唯一的缺点是 token 消耗很快，用起来贵。',
+   en:"The one downside with Claude is the tokens run out fast — it gets expensive.",
+   note:'<strong>the one downside</strong> = 唯一的缺点，"one" 强调"就这一个"；<strong>run out fast</strong> = 消耗很快，用尽得快。'},
+  {cat:'chatgpt', zh:'所以现在两个都用。Codex 在写代码上更准确，错误少。',
+   en:"So now I use both. For coding, Codex tends to hit what I need more precisely with fewer mistakes.",
+   note:'<strong>hit what I need precisely</strong> = 准确命中我的需求；<strong>tends to</strong> = 一般来说会……，表示规律性而非绝对。'},
+  {cat:'chatgpt', zh:'Claude 在沟通和推理上更好，但有时候在代码上会出错。',
+   en:"Claude is better for communication and reasoning, but it does slip up on code sometimes.",
+   note:'<strong>slip up on</strong> = 在某件事上出错，"slip" 本意是滑倒，引申为一不小心失误——不是大错，是本来能做好但没发挥好；<strong>it does slip up</strong> 中的 "does" 是语气加强，强调"确实会"。'},
+];
+
+/* ══════════ FLASHCARD LOGIC ══════════ */
+const catMeta = {
+  ai:       {label:'AI & tech',         cls:'badge-ai'},
+  accent:   {label:'口音',              cls:'badge-accent'},
+  haircut:  {label:'理发',              cls:'badge-haircut'},
+  general:  {label:'通用表达',          cls:'badge-general'},
+  deepseek: {label:'DeepSeek',          cls:'badge-deepseek'},
+  chatgpt:  {label:'ChatGPT / Claude',  cls:'badge-chatgpt'},
+};
+
+let fcList = [...FC_ALL];
+let fcIdx = 0;
+let fcFlipped = false;
+
+function fcRender() {
+  const c = fcList[fcIdx];
+  document.getElementById('fc-num').textContent = `${fcIdx+1} / ${fcList.length}`;
+  document.getElementById('fc-badge').textContent = catMeta[c.cat].label;
+  document.getElementById('fc-badge').className = `badge ${catMeta[c.cat].cls}`;
+  document.getElementById('fc-front-en').textContent = c.en;
+  document.getElementById('fc-front-zh').textContent = c.zh;
+  document.getElementById('fc-back-ex').textContent = c.ex;
+  document.getElementById('fc-counter').textContent = `${fcIdx+1} / ${fcList.length}`;
+  document.getElementById('fc-prog').style.width = `${((fcIdx+1)/fcList.length)*100}%`;
+  document.getElementById('fc-prev').disabled = fcIdx === 0;
+  document.getElementById('fc-next').disabled = fcIdx === fcList.length - 1;
+  document.getElementById('fc-card').classList.remove('flipped');
+  fcFlipped = false;
+}
+
+function fcFlip() {
+  fcFlipped = !fcFlipped;
+  document.getElementById('fc-card').classList.toggle('flipped', fcFlipped);
+}
+
+function fcGo(d) {
+  const n = fcIdx + d;
+  if (n >= 0 && n < fcList.length) { fcIdx = n; fcRender(); }
+}
+
+function fcShuffle() {
+  for (let i = fcList.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [fcList[i],fcList[j]] = [fcList[j],fcList[i]];
+  }
+  fcIdx = 0; fcRender();
+}
+
+function fcFilter(cat, el) {
+  document.querySelectorAll('#fc-tabs .tab').forEach((t) => {
+    t.classList.remove('active');
+  });
+  el.classList.add('active');
+  fcList = cat === 'all' ? [...FC_ALL] : FC_ALL.filter(c => c.cat === cat);
+  fcIdx = 0; fcRender();
+}
+
+/* ══════════ ORAL PRACTICE LOGIC ══════════ */
+let opList = [...OP_ALL];
+let opIdx = 0;
+
+function opRender() {
+  const q = opList[opIdx];
+  document.getElementById('op-num').textContent = `${opIdx+1} / ${opList.length}`;
+  document.getElementById('op-badge').textContent = catMeta[q.cat].label;
+  document.getElementById('op-badge').className = `badge ${catMeta[q.cat].cls}`;
+  document.getElementById('op-zh').textContent = q.zh;
+  document.getElementById('op-en').textContent = q.en;
+  document.getElementById('op-note').innerHTML = q.note;
+  document.getElementById('op-answer').style.display = 'none';
+  document.getElementById('op-reveal-btn').style.display = 'inline-block';
+  document.getElementById('op-counter').textContent = `${opIdx+1} / ${opList.length}`;
+  document.getElementById('op-prog').style.width = `${((opIdx+1)/opList.length)*100}%`;
+  document.getElementById('op-prev').disabled = opIdx === 0;
+  document.getElementById('op-next').disabled = opIdx === opList.length - 1;
+}
+
+function opReveal() {
+  document.getElementById('op-answer').style.display = 'block';
+  document.getElementById('op-reveal-btn').style.display = 'none';
+}
+
+function opGo(d) {
+  const n = opIdx + d;
+  if (n >= 0 && n < opList.length) { opIdx = n; opRender(); }
+}
+
+function opFilter(cat, el) {
+  document.querySelectorAll('#op-tabs .tab').forEach((t) => {
+    t.classList.remove('active');
+  });
+  el.classList.add('active');
+  opList = cat === 'all' ? [...OP_ALL] : OP_ALL.filter(q => q.cat === cat);
+  opIdx = 0; opRender();
+}
+
+document.getElementById('fc-card').addEventListener('click', fcFlip);
+document.getElementById('fc-shuffle').addEventListener('click', fcShuffle);
+document.getElementById('fc-prev').addEventListener('click', () => fcGo(-1));
+document.getElementById('fc-next').addEventListener('click', () => fcGo(1));
+document.querySelectorAll('#fc-tabs .tab').forEach((tab) => {
+  tab.addEventListener('click', () => fcFilter(tab.dataset.filter, tab));
+});
+
+document.getElementById('op-reveal-btn').addEventListener('click', opReveal);
+document.getElementById('op-prev').addEventListener('click', () => opGo(-1));
+document.getElementById('op-next').addEventListener('click', () => opGo(1));
+document.querySelectorAll('#op-tabs .tab').forEach((tab) => {
+  tab.addEventListener('click', () => opFilter(tab.dataset.filter, tab));
+});
+
+fcRender();
+opRender();
+</script>
+</body>
+</html>

@@ -247,10 +247,18 @@
 		});
 	}
 
-	applyUiLanguage();
-	bindUiLanguageButtons();
-	document.addEventListener("astro:page-load", () => {
+	function initializeUiLanguage() {
 		applyUiLanguage();
 		bindUiLanguageButtons();
+	}
+
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initializeUiLanguage, { once: true });
+	} else {
+		initializeUiLanguage();
+	}
+
+	document.addEventListener("astro:page-load", () => {
+		initializeUiLanguage();
 	});
 </script>
