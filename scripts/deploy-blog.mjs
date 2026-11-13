@@ -103,6 +103,7 @@ try {
 		extraVerifyUrls: [
 			"https://blog.cliffordchen.org/404.html",
 			"https://blog.cliffordchen.org/rss.xml",
+			"https://blog.cliffordchen.org/admin/",
 			"https://blog.cliffordchen.org/posts/math/algebra/counting-theorem-intuition/",
 		],
 		host: webHost,
@@ -115,6 +116,7 @@ try {
 		extraVerifyUrls: [
 			"https://cliffordchen.org/404.html",
 			"https://cliffordchen.org/rss.xml",
+			"https://cliffordchen.org/admin/",
 			"https://cliffordchen.org/posts/math/algebra/counting-theorem-intuition/",
 		],
 		host: sydneyHost,

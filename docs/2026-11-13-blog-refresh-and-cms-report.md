@@ -58,7 +58,7 @@
 
 - `src/pages/admin.astro`：管理页、手机布局、禁止索引。
 - `public/admin/config.yml`：仓库、嵌套文章目录、完整 frontmatter 字段与媒体上传设置。
-- `public/admin/editor.js`：Markdown 文件导入控件。导入正文，frontmatter 信息需在表单中核对填写。
+- `public/admin/editor.js`：Markdown 文件导入与源码编辑控件，验证导入后保留 `$E=mc^2$` 原始文本。导入正文，frontmatter 信息需在表单中核对填写；源码编辑避免富文本重写数学定界符。
 - `public/admin/bootstrap.js`：从 Sydney 的管理入口跳转至 Seoul，确保 OAuth origin 一致。
 - `public/admin/decap-cms.js`：固定版本第三方包；SHA256 `B96249532AB219C5A78B57ED4AC05EB92E6446819AC217CED6F81318A0D98E70`。下载地址：`https://unpkg.com/decap-cms@3.17.3/dist/decap-cms.js`。
 - `astro.config.ts`：后台不进 sitemap，robots 排除 /admin/ 和 /cms/。
@@ -113,5 +113,6 @@
 - 首轮本机双 VPS 部署成功；最终版本通过新增 GitHub Actions 流程再次部署并验收。
 - 手机后台使用内存 test-repo 后端验证新增文章与 Markdown 文件导入，不向真实仓库发布测试内容。
 - 遇到并修复：第三方大包参与类型分析导致内存耗尽（排除 vendor 包）；手机预览 CSS 误隐藏表单（移除错误选择器）；新后台静态目录在 Astro dev 不自动路由（改用 admin.astro）；服务重启后立即检查连接失败（等待启动后重试）。
+- 首次 Git 提交漏掉未跟踪的 admin.astro，造成 CI 部署后后台 404；补齐提交，同时将两站 /admin/ 纳入部署脚本的必检 URL，防止再次把这种发布判为成功。
 - OAuth 登录必须由本人在浏览器完成 GitHub 授权；模拟安全测试不能替代本人首次登录确认。
 - `docs/infrastructure-reference.md` 是此前遗留的未提交文件，本次没有将其加入提交。

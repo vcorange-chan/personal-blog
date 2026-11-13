@@ -73,7 +73,16 @@ try {
 		mimeType: "text/markdown",
 		buffer: Buffer.from("# Imported mathematics\n\n$E=mc^2$"),
 	});
-	await editor.getByText("Imported mathematics", { exact: true }).waitFor();
+	await editor.waitForFunction(() =>
+		document
+			.querySelector('textarea[aria-label="Markdown body"]')
+			?.value.includes("Imported mathematics"),
+	);
+	assert.ok(
+		(await editor.getByRole("textbox", { name: "Markdown body" }).inputValue()).includes(
+			"$E=mc^2$",
+		),
+	);
 	await editor.screenshot({
 		path: "artifacts/release-2026-11-13/editor-mobile.png",
 		fullPage: true,

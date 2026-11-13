@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex,nofollow" />
+		<title>Clifford Chen | Content Manager</title>
+		<link href="/admin/config.yml" type="text/yaml" rel="cms-config-url" />
+		<style is:global>
+			@media (max-width: 700px) {
+				body {
+					min-width: 0 !important;
+				}
+				[class*="AppMainContainer"] {
+					margin-left: 0 !important;
+					padding: 8px !important;
+				}
+				[class*="EditorContainer"] {
+					min-width: 0 !important;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<script is:inline src="/admin/bootstrap.js"></script>
+		<script is:inline src="/admin/decap-cms.js"></script>
+		<script is:inline src="/admin/editor.js"></script>
+	</body>
+</html>

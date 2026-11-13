@@ -17,7 +17,21 @@ const ImportableMarkdown = window.createClass({
 					},
 				}),
 			]),
-			window.h(markdownWidget.control, { ...this.props, key: "editor" }),
+			window.h("textarea", {
+				key: "editor",
+				id: this.props.forID,
+				"aria-label": "Markdown body",
+				value: this.props.value ?? "",
+				onChange: (event) => this.props.onChange(event.target.value),
+				style: {
+					width: "100%",
+					minHeight: "420px",
+					padding: "12px",
+					fontFamily: "monospace",
+					fontSize: "16px",
+					boxSizing: "border-box",
+				},
+			}),
 		]);
 	},
 });
