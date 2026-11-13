@@ -90,6 +90,7 @@
 - 只允许 `vcorange-chan`，OAuth 请求 public_repo 范围，令牌仅发往固定后台 origin。
 - GitHub 访问令牌由 Decap 在登录浏览器管理；公共电脑使用后应退出后台，也可从 GitHub 撤销 OAuth 应用授权。
 - Caddy 为 /admin/ 添加强制 CSP、no-store、noindex 和禁止嵌套响应头；正文保留已有 CSP-Report-Only。
+- Decap 内置 AJV 配置校验器需要动态生成函数，因此仅 /admin/ 的 CSP 允许 unsafe-eval；脚本来源仍限定 self，不允许 inline script。初次线上浏览器检查发现此兼容问题后已修正，正文策略不因此放宽。
 
 安装：`node scripts/install-cms.mjs`。配置代理脚本：`scripts/configure-blog-cms.py`。修改前保存 `Caddyfile.before-blog-cms`，验证失败自动恢复，只 reload Caddy。
 
@@ -116,3 +117,7 @@
 - 首次 Git 提交漏掉未跟踪的 admin.astro，造成 CI 部署后后台 404；补齐提交，同时将两站 /admin/ 纳入部署脚本的必检 URL，防止再次把这种发布判为成功。
 - OAuth 登录必须由本人在浏览器完成 GitHub 授权；模拟安全测试不能替代本人首次登录确认。
 - `docs/infrastructure-reference.md` 是此前遗留的未提交文件，本次没有将其加入提交。
+
+最终线上验收：两站首页、Counting Theorem、拓扑笔记、/admin/ 均为 200；六篇删除文章及法语独立 HTML 均为 404。首尔真实域名下 390px / 1440px 公式验收通过，手机登录页与内存测试后端中的 Markdown 导入通过，保留公式源码。OAuth 入口返回 302，Client ID、public_repo、回调地址均与本人配置一致。
+
+自动部署已成功：[GitHub Actions run 43384819022](https://github.com/vcorange-chan/personal-blog/actions/runs/43384819022)。代码主提交 b274955、入口与手机导入修复 3207657。运行中出现 Actions v4 的 Node 20 弃用提示，由运行器使用 Node 24 执行，本轮构建与部署成功。

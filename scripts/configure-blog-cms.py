@@ -14,14 +14,19 @@ snippet = '''
         Cache-Control "no-store"
         X-Robots-Tag "noindex, nofollow"
         X-Frame-Options "DENY"
-        Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com https://github.com https://raw.githubusercontent.com; font-src 'self' data:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'"
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com https://github.com https://raw.githubusercontent.com; font-src 'self' data:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'"
     }
 '''
+updated = original
 if '# Clifford CMS:' not in original:
     if original.count(marker) != 1:
         raise SystemExit('Expected one Seoul blog block; no configuration changed.')
-    path.with_name('Caddyfile.before-blog-cms').write_text(original)
-    path.write_text(original.replace(marker, marker + snippet, 1))
+    updated = original.replace(marker, marker + snippet, 1)
+else:
+    updated = original.replace("script-src 'self'; style-src", "script-src 'self' 'unsafe-eval'; style-src")
+if updated != original:
+    path.with_name('Caddyfile.before-blog-cms-update').write_text(original)
+    path.write_text(updated)
     result = subprocess.run(['caddy', 'validate', '--config', str(path)])
     if result.returncode:
         path.write_text(original)
