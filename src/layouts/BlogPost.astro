@@ -5,6 +5,7 @@ import GiscusComments from "@/components/blog/GiscusComments.astro";
 import Masthead from "@/components/blog/Masthead.astro";
 import StructuredData from "@/components/blog/StructuredData.astro";
 import TOC from "@/components/blog/TOC.astro";
+import "@/styles/reading-page.css";
 
 import BaseLayout from "./Base.astro";
 
@@ -22,6 +23,7 @@ const readingTime: string = remarkPluginFrontmatter.readingTime;
 ---
 
 <BaseLayout
+	readingPage
 	meta={{
 		articleDate,
 		description: description ?? title,
@@ -30,17 +32,17 @@ const readingTime: string = remarkPluginFrontmatter.readingTime;
 	}}
 >
 	<StructuredData post={post} />
-	<article class:list={["grow break-words", { "immersive-post": isImmersive }]}>
-		<div id="blog-hero" class="mb-12"><Masthead content={post} readingTime={readingTime} /></div>
-		<div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+	<article
+		lang={post.data.lang}
+		class:list={["reading-article grow break-words", { "immersive-post": isImmersive }]}
+	>
+		<div id="blog-hero" class="article-masthead">
+			<Masthead content={post} readingTime={readingTime} />
+		</div>
+		<div class="article-content">
 			{!!headings.length && !isImmersive && <TOC headings={headings} />}
 			<div
-				class:list={[
-					"w-full min-w-0",
-					isImmersive
-						? "w-full max-w-none"
-						: "prose prose-sm prose-headings:font-semibold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-muted prose-headings:hover:before:text-accent sm:prose-headings:before:content-['#'] sm:prose-th:before:content-none",
-				]}
+				class:list={["article-body w-full min-w-0", isImmersive ? "w-full max-w-none" : "prose"]}
 			>
 				{
 					post.data.interactiveFile && (

@@ -1,0 +1,219 @@
+@font-face {
+	font-family: "Reading Garamond";
+	src: url("/fonts/eb-garamond-latin.woff2") format("woff2");
+	font-style: normal;
+	font-weight: 400 800;
+	font-display: swap;
+}
+
+/* Keep editorial overrides inside the article layout. */
+html.reading-page {
+	--color-global-bg: #e6e6c8;
+	--color-global-text: #282b23;
+	--color-accent-2: #11150f;
+	--color-muted: #606451;
+	--color-accent: #43563c;
+	--color-link: #43563c;
+	--color-quote: #4f5d44;
+	--reading-serif:
+		"Reading Garamond", "Iowan Old Style", "Palatino Linotype", "Kaiti SC", KaiTi, STKaiti, serif;
+}
+html.reading-page[data-theme="dark"] {
+	--color-global-bg: #20241e;
+	--color-global-text: #e0e3d4;
+	--color-accent-2: #f1f2e5;
+	--color-muted: #aeb5a1;
+	--color-accent: #becba9;
+	--color-link: #becba9;
+	--color-quote: #c5ceb7;
+}
+.reading-page body {
+	max-width: 808px;
+	background: var(--color-global-bg);
+}
+.reading-page #main-header {
+	margin-bottom: 72px;
+}
+.reading-article {
+	position: relative;
+	padding-inline: 24px;
+	padding-bottom: 36px;
+}
+.reading-article::before,
+.reading-article::after {
+	position: absolute;
+	inset-block: 0;
+	width: 1px;
+	background: repeating-linear-gradient(to bottom, currentColor 0 2px, transparent 2px 9px);
+	color: var(--color-muted);
+	opacity: 0.2;
+	content: "";
+	pointer-events: none;
+}
+.reading-article::before {
+	inset-inline-start: 0;
+}
+.reading-article::after {
+	inset-inline-end: 0;
+}
+.reading-page .article-masthead {
+	margin-bottom: 72px;
+}
+.reading-page .article-date {
+	margin: 0 0 20px;
+	font-family: var(--font-code);
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.6;
+	text-transform: uppercase;
+	color: var(--color-muted);
+}
+.reading-page .article-title {
+	margin: 0;
+	font-family: var(--reading-serif);
+	font-size: 76px;
+	font-weight: 500;
+	line-height: 1.04;
+	letter-spacing: 0;
+	color: var(--color-accent-2);
+	overflow-wrap: anywhere;
+	text-wrap: balance;
+}
+.reading-page .article-title:lang(zh) {
+	font-size: 54px;
+	line-height: 1.25;
+}
+
+.reading-page .article-title-long:not(:lang(zh)) {
+	font-size: 64px;
+}
+.reading-page .article-byline,
+.reading-page .article-tags {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 14px;
+	row-gap: 6px;
+	color: var(--color-muted);
+	font-family: var(--font-ui);
+	font-size: 12px;
+	line-height: 1.7;
+}
+.reading-page .article-byline {
+	margin-top: 24px;
+}
+.reading-page .article-tags {
+	margin-top: 10px;
+}
+.reading-page .article-tags a {
+	text-decoration: underline;
+	text-underline-offset: 4px;
+}
+.reading-page .article-tags a:hover {
+	color: var(--color-accent-2);
+}
+.reading-page .article-toc {
+	margin-block: 0 36px;
+	padding-block: 14px;
+	border-block: 1px dashed color-mix(in srgb, var(--color-muted) 28%, transparent);
+	font-family: var(--font-ui);
+	font-size: 14px;
+}
+.reading-page .article-toc summary {
+	cursor: pointer;
+	width: fit-content;
+}
+.reading-page .article-body.prose {
+	max-width: none;
+	font-family: var(--font-ui);
+	font-size: 17px;
+	line-height: 1.75;
+	color: var(--color-global-text);
+}
+.reading-page .article-body.prose:lang(zh) {
+	font-family: Inter, "Kaiti SC", KaiTi, STKaiti, "Noto Serif CJK SC", serif;
+	line-height: 1.95;
+}
+.reading-page .article-body.prose :where(h1, h2, h3, h4) {
+	font-family: var(--reading-serif);
+	font-weight: 600;
+	line-height: 1.25;
+	letter-spacing: 0;
+	color: var(--color-accent-2);
+	text-wrap: balance;
+}
+.reading-page .article-body.prose h2 {
+	margin-block: 2.4em 0.8em;
+	font-size: 32px;
+}
+.reading-page .article-body.prose h3 {
+	margin-block: 2em 0.7em;
+	font-size: 25px;
+}
+.reading-page .article-body.prose p {
+	margin-block: 0 1.25em;
+}
+.reading-page .article-body.prose :where(img, video, iframe) {
+	max-width: 100%;
+}
+.reading-page .article-body.prose :where(img, video) {
+	margin-block: 28px;
+	border-radius: 2px;
+}
+.reading-page .article-body.prose :where(table, pre) {
+	max-width: 100%;
+	overflow-x: auto;
+}
+.reading-page .article-body.prose table {
+	display: block;
+	font-size: 14px;
+}
+.reading-page .article-body.prose blockquote {
+	border-color: color-mix(in srgb, var(--color-muted) 40%, transparent);
+	font-weight: 400;
+}
+.reading-page .article-body .katex {
+	font-size: 1.05em;
+}
+.reading-page .article-body .katex-display {
+	max-width: 100%;
+	padding-block: 8px;
+}
+.reading-page #comments {
+	margin-top: 80px;
+}
+.reading-page #comments h2 {
+	font-family: var(--reading-serif);
+	font-size: 28px;
+}
+@media (max-width: 639px) {
+	.reading-page body {
+		padding-top: 32px;
+	}
+	.reading-page #main-header {
+		margin-bottom: 48px;
+	}
+	.reading-article {
+		padding-inline: 14px;
+	}
+	.reading-page .article-masthead {
+		margin-bottom: 48px;
+	}
+	.reading-page .article-title {
+		font-size: 48px;
+	}
+	.reading-page .article-title-long:not(:lang(zh)) {
+		font-size: 42px;
+	}
+	.reading-page .article-title:lang(zh) {
+		font-size: 36px;
+	}
+	.reading-page .article-date {
+		margin-bottom: 16px;
+	}
+	.reading-page .article-body.prose {
+		font-size: 16px;
+	}
+	.reading-page .article-body.prose h2 {
+		font-size: 28px;
+	}
+}
