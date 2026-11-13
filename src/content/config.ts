@@ -13,9 +13,16 @@ const posts = defineCollection({
 		series: z.string().optional(),
 		seriesOrder: z.number().optional(),
 		tags: z.array(z.string()).optional(),
-		lang: z.enum(["zh", "en", "fr", "ko"]),
+		lang: z
+			.string()
+			.regex(/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/)
+			.default("en"),
 		description: z.string().optional(),
 		layout: z.enum(["article", "immersive"]).default("article"),
+		interactiveFile: z
+			.string()
+			.regex(/^\/uploads\/[a-zA-Z0-9_./%\-\p{L}]+\.html$/u)
+			.optional(),
 		draft: z.boolean().default(false),
 	}),
 });

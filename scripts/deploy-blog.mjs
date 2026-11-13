@@ -103,7 +103,7 @@ try {
 		extraVerifyUrls: [
 			"https://blog.cliffordchen.org/404.html",
 			"https://blog.cliffordchen.org/rss.xml",
-			"https://blog.cliffordchen.org/posts/lang/french/lecon-1-interactive/",
+			"https://blog.cliffordchen.org/posts/math/algebra/counting-theorem-intuition/",
 		],
 		host: webHost,
 		name: "Seoul blog",
@@ -115,7 +115,7 @@ try {
 		extraVerifyUrls: [
 			"https://cliffordchen.org/404.html",
 			"https://cliffordchen.org/rss.xml",
-			"https://cliffordchen.org/posts/lang/french/lecon-1-interactive/",
+			"https://cliffordchen.org/posts/math/algebra/counting-theorem-intuition/",
 		],
 		host: sydneyHost,
 		name: "Sydney main site",

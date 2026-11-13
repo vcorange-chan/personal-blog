@@ -1,0 +1,81 @@
+backend:
+  name: github
+  repo: vcorange-chan/personal-blog
+  branch: main
+  base_url: https://blog.cliffordchen.org
+  auth_endpoint: cms/auth
+site_url: https://cliffordchen.org
+display_url: https://blog.cliffordchen.org
+locale: en
+media_folder: public/uploads
+public_folder: /uploads
+publish_mode: simple
+slug:
+  encoding: unicode
+  clean_accents: false
+collections:
+  - name: posts
+    label: Posts
+    label_singular: Post
+    folder: src/content/posts
+    create: true
+    delete: true
+    extension: md
+    format: yaml-frontmatter
+    slug: "{{slug}}"
+    nested:
+      depth: 10
+      subfolders: false
+      summary: "{{title}}"
+    meta:
+      path: { widget: string, label: Folder }
+    editor:
+      preview: false
+    fields:
+      - { name: title, label: Title, widget: string }
+      - {
+          name: date,
+          label: Date,
+          widget: datetime,
+          date_format: YYYY-MM-DD,
+          time_format: false,
+          format: YYYY-MM-DD,
+        }
+      - {
+          name: updatedDate,
+          label: Updated date,
+          widget: datetime,
+          required: false,
+          date_format: YYYY-MM-DD,
+          time_format: false,
+          format: YYYY-MM-DD,
+        }
+      - {
+          name: category,
+          label: Category,
+          widget: select,
+          options: [math, tech, projects, academia, lang, read],
+          default: math,
+        }
+      - { name: subcategory, label: Subcategory, widget: string, required: false }
+      - { name: series, label: Series, widget: string, required: false }
+      - { name: seriesOrder, label: Series order, widget: number, value_type: int, required: false }
+      - { name: tags, label: Tags, widget: list, required: false }
+      - { name: lang, label: Content language, widget: string, default: en }
+      - { name: description, label: Description, widget: text, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: false }
+      - {
+          name: layout,
+          label: Layout,
+          widget: select,
+          options: [article, immersive],
+          default: article,
+        }
+      - {
+          name: interactiveFile,
+          label: HTML document,
+          widget: file,
+          required: false,
+          media_library: { config: { multiple: false } },
+        }
+      - { name: body, label: Body, widget: importable-markdown, required: false }

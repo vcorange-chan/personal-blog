@@ -1,0 +1,50 @@
+name: Publish blog to both VPS
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: production-blog
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - name: Configure deployment SSH
+        env:
+          SEOUL_KEY: ${{ secrets.BLOG_SEOUL_SSH_KEY }}
+          SYDNEY_KEY: ${{ secrets.BLOG_SYDNEY_SSH_KEY }}
+          HOST_KEYS: ${{ secrets.BLOG_SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SEOUL_KEY" > ~/.ssh/seoul
+          printf '%s\n' "$SYDNEY_KEY" > ~/.ssh/sydney
+          printf '%s\n' "$HOST_KEYS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/seoul ~/.ssh/sydney
+          cat > ~/.ssh/config <<'CONFIG'
+          Host web-vps
+            HostName 141.164.39.98
+            User clifford
+            Port 22
+            IdentityFile ~/.ssh/seoul
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+          Host vps
+            HostName 149.28.170.226
+            User clifford
+            Port 22022
+            IdentityFile ~/.ssh/sydney
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+          CONFIG
+      - run: npm run deploy

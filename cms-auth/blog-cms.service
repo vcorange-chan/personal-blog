@@ -1,0 +1,18 @@
+[Unit]
+Description=Clifford Blog GitHub OAuth
+After=network-online.target
+
+[Service]
+DynamicUser=yes
+EnvironmentFile=/etc/blog-cms.env
+ExecStart=/usr/bin/node /opt/blog-cms/server.mjs
+Restart=on-failure
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+MemoryMax=128M
+
+[Install]
+WantedBy=multi-user.target

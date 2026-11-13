@@ -27,9 +27,9 @@ export default defineConfig({
 	integrations: [
 		expressiveCode(expressiveCodeOptions),
 		icon(),
-		sitemap(),
+		sitemap({ filter: (page) => !page.endsWith("/admin/") }),
 		mdx(),
-		robotsTxt(),
+		robotsTxt({ policy: [{ userAgent: "*", allow: "/", disallow: ["/admin/", "/cms/"] }] }),
 		webmanifest({
 			// See: https://github.com/alextim/astro-lib/blob/main/packages/astro-webmanifest/README.md
 			name: siteConfig.title,

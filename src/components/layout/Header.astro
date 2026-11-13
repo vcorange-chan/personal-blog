@@ -1,5 +1,4 @@
 ---
-import LanguageSwitch from "@/components/LanguageSwitch.astro";
 import ThemeToggle from "@/components/ThemeToggle.astro";
 import { exploreLinks, menuLinks } from "@/site.config";
 import { siteConfig } from "../../site.config";
@@ -70,7 +69,7 @@ const isExploreCurrent = exploreLinks.some((link) => currentPath.startsWith(link
 			</div>
 		</nav>
 	</div>
-	<LanguageSwitch />
+	<div class="ms-auto"></div>
 	<ThemeToggle />
 	<mobile-button>
 		<button

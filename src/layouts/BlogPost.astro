@@ -36,11 +36,23 @@ const readingTime: string = remarkPluginFrontmatter.readingTime;
 			{!!headings.length && !isImmersive && <TOC headings={headings} />}
 			<div
 				class:list={[
+					"w-full min-w-0",
 					isImmersive
 						? "w-full max-w-none"
 						: "prose prose-sm prose-headings:font-semibold prose-headings:text-accent-2 prose-headings:before:absolute prose-headings:before:-ms-4 prose-headings:before:text-muted prose-headings:hover:before:text-accent sm:prose-headings:before:content-['#'] sm:prose-th:before:content-none",
 				]}
 			>
+				{
+					post.data.interactiveFile && (
+						<iframe
+							src={post.data.interactiveFile}
+							title={title}
+							sandbox="allow-scripts allow-popups"
+							referrerpolicy="no-referrer"
+							class="h-[85vh] w-full border-0"
+						/>
+					)
+				}
 				<slot />
 			</div>
 		</div>
